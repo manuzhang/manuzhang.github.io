@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Flink Forward SF 2017 Readings</h1><p><a href="http://sf.flink-forward.org/">Flink Forward</a>, &quot;The premier conference on Apache Flink®&quot;, just took place in San Francisco. All the <a href="https://www.slideshare.net/FlinkForward">slides</a> and <a href="https://www.youtube.com/playlist?list=PLDX4T_cnKjD2UC6wJr_wRbIvtlMtkc-n2">videos</a> are available now. The conference was both abundant in practical experiences and technical details. After going through all the slides, I'd like to share some interesting contents that you can't find on <a href="http://flink.apache.org/">http://flink.apache.org/</a>. (I wasn't there and neither have I watched all the videos so take my readings with a grain of salt)</p>
+<p><em>Update: data Artisans has published an official <a href="https://data-artisans.com/blog/stream-processing-flink-forward-sf-2017-recap">recap: On the State of Stream Processing with Apache Flink</a></em></p>
+<h3>TensorFlow with Flink</h3>
+<blockquote>
+<p>-&quot;What is so hot ?&quot;<br />
+-&quot;Deep learning&quot;</p>
+<p>-&quot;What is so hot in deep learning ?&quot;<br />
+-&quot;TensorFlow&quot;</p>
+</blockquote>
+<p><a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-eron-wright-introducing-flink-tensorflow">TensorFlow &amp; Apache Flink</a> immediately caught my eye. The basic idea is &quot;TF Graph as a Flink map function&quot; for inference after preprocessing data to off-heap tensor. Online learning is a future direction and the project is <a href="https://github.com/cookieai/flink-tensorflow/">open sourced on GitHub</a>.</p>
+<h3>Deep Learning with Flink</h3>
+<p>Lightbend's Dean Wampler <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-dean-wampler-streaming-deep-learning-scenarios-with-flink">discussed about how to do Deep Learning with Flink generally</a>, from the challenges in (mini-batch / distributed / online) training and inference to practical approaches, leveraging such Flink features as side inputs and async I/O. He also recommended &quot;Do&quot;s and &quot;Don't&quot;s for the road ahead. One interesting &quot;Don't&quot; is <a href="https://en.wikipedia.org/wiki/Predictive_Model_Markup_Language">PMML</a>.</p>
+<blockquote>
+<p>PMML - doesn't work well enough. Not really that useful ?</p>
+</blockquote>
+<h3>PMML - not useful ?</h3>
+<p>At least <a href="https://en.wikipedia.org/wiki/Predictive_Model_Markup_Language">ING uses PMML models to bridge the offline training with Spark and online scoring with Flink streaming</a>. The striking part is how they've decoupled &quot;What&quot; (DAG) and &quot;How&quot; (behavior of each node on the DAG) in the scoring application. Model definition is added at runtime through a broadcast stream without downtime. The same applies for data persist and feature extraction.</p>
+<p>By the way, <a href="http://storm.apache.org/2017/03/29/storm110-released.html">Apache Storm has added PMML support in 1.1.0</a>.</p>
+<h3>It's the data</h3>
+<blockquote>
+<p>-&quot;Which machine learning (ML) framework is the best ?&quot;
+-&quot;All of them&quot;</p>
+</blockquote>
+<p>That's Ted Dunning's answer after learning that his customers typically use 12 ML packages and the smallest number is 5. That's why he didn't talk about Flink ML in <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-ted-dunning-nonflink-machine-learning-on-flink">Machine Learning on Flink</a>. Even  ML is not the key here.</p>
+<blockquote>
+<p>90%+ of effort is logistics, not learning.</p>
+</blockquote>
+<p>It is the data. Record raw data, use streams to keep data around, and measure and understand (with meta-data) everything. Another thing is to make deployment easier with containerization.</p>
+<p>One more lesson for me is there is no such thing as one model.</p>
+<blockquote>
+<p>You will have dozens of models, likely hundreds to thousands.</p>
+</blockquote>
+<h3>Blink Improvements</h3>
+<p>Blink is Alibaba's fork of Flink. For large scale streaming (&gt; 1000 nodes) at Alibaba, Blink added a bunch of <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-feng-wang-zhijiang-wang-runtime-improvements-in-blink-for-large-scale-streaming-at-alibaba">runtime improvements</a>. (the right side of &quot;=&gt;&quot; is the problem to solve)</p>
+<ul>
+<li>Native integration with resource management (YARN) =&gt; single JobManager for all tasks</li>
+<li>Incremental checkpoint =&gt; large state</li>
+<li>Asynchronous operator =&gt; blocking I/O</li>
+<li>Fine-grained recovery from task failures =&gt; application restart on one task failure</li>
+<li>Allocation reuse for task recovery =&gt; expensive to restore from HDFS</li>
+<li>Non-disruptive JobManager failures via reconciliation =&gt; tasks restart on JobManager failure</li>
+</ul>
+<p>What's cool is the improvements are being contributed back to the community.</p>
+<h3>SQL as building block</h3>
+<p>Uber shared the <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-chinmay-soman-real-time-analytics-in-the-real-world-challenges-and-lessons-at-uber">evolution of their business needs and their system evolved accordingly</a> from event processing, to OLAP, to Streaming SQL on Flink.</p>
+<blockquote>
+<p>70-80% of jobs can be implemented via SQL.</p>
+</blockquote>
+<p>For more on Flink's SQL API, check out <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-timo-walther-table-sql-api-unified-apis-for-batch-and-stream-processing">Table &amp; SQL API – unified APIs for batch and stream processing</a> and <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-shaoxuan-wangxiaowei-jiang-blinks-improvements-to-flink-sql-and-tableapi">Blink's Improvements to Flink SQL And TableAPI</a></p>
+<h3>To Beam or not to Beam</h3>
+<p>This is one of Uber's future discussions.   From the <a href="https://beam.apache.org/">official site</a>,</p>
+<blockquote>
+<p>Apache Beam provides an advanced unified programming model, allowing you to implement batch and streaming data processing jobs that can run on any execution engine.</p>
+</blockquote>
+<p>Beam has recently added <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-kenneth-knowles-back-to-sessions-overview">State and Timer support to unlock new use cases</a> which are portable across runners (e.g. Flink).</p>
+<h3>What is Streaming ?</h3>
+<p>I'd like to wrap up with Stephen Ewen's <a href="https://www.slideshare.net/FlinkForward/flink-forward-sf-2017-stephan-ewen-convergence-of-realtime-analytics-and-datadriven-applications">answer and high level view of Streaming</a>.</p>
+<blockquote>
+<p>2016 was the year when streaming technologies became mainstream</p>
+<p>2017 is the year to realize the full spectrum of streaming applications</p>
+</blockquote>
+</div><div></div></div></body></html>

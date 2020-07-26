@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Streaming at Spark Summit East 2016</h1><p>Spark Summit East 2016 is held in NYC last month.
+Databricks already had a <a href="https://databricks.com/blog/2016/02/18/a-look-back-at-spark-summit-east-2016-thank-you-nyc.html">look back</a>, and I'm going to focus on the (Spark) streaming part here.</p>
+<h2>Highlights</h2>
+<p>The most interesting ones are</p>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/events/spark-streaming-and-iot/">Spark Streaming and Iot</a></li>
+<li><a href="https://spark-summit.org/east-2016/events/online-security-analytics-on-large-scale-video-surveillance-system/">Online Security Analytics on Large Scale Video Survellance System</a></li>
+<li><a href="https://spark-summit.org/east-2016/events/clickstream-analysis-with-spark-understanding-visitors-in-realtime/">Clickstream Analysis with Spark—Understanding Visitors in Realtime
+</a></li>
+</ol>
+<h3>Spark Streaming and Iot</h3>
+<p>Mike Freedman, CEO and Co-Founder of <a href="http://www.iobeam.com/">iobeam</a>, mainly talked about the challenges in applying Spark to IoT.</p>
+<p><img src="http://image.slidesharecdn.com/1gmikefreedman-160224030556/95/spark-streaming-and-iot-by-mike-freedman-4-638.jpg?cb=1456283190" alt="challenges_applying_spark_iot" /></p>
+<p>I like this talk because these challenges are quite general. It's unclear how iobeam solved them with Spark Streaming which only supports data arrival time. iobeam is a data analysis platform designed for IoT. I really enjoy their websites which put codes side-by-side with use cases.</p>
+<h3>Online Security Analytics on Large Scale Video Survellance System</h3>
+<p>This is from EMC Video Analytics Data Lake, where Spark Streaming is used for online video processing and detection.</p>
+<p><img src="http://image.slidesharecdn.com/3mhyucao-160224032524/95/online-security-analytics-on-large-scale-video-surveillance-system-by-yu-cao-and-xiaoyan-guo-11-638.jpg?cb=1456284399" alt="online_video_processing" /></p>
+<p>Streaming application serves to feed offline model training which is in turn used to realtime detection.</p>
+<h3>Clickstream Analysis with Spark—Understanding Visitors in Realtime</h3>
+<p>The talk is really about the architecture evolution from &quot;Larry &amp; Friends&quot; (Oracle) to &quot;Hadoop &amp; Friends&quot; (HDFS, Hive), from Kappa-Architecture to Lambda-Architecture, and finally Mu-Architecture all based on Spark.</p>
+<p><img src="http://image.slidesharecdn.com/9scjadersberger-160224034337/95/clickstream-analysis-with-sparkunderstanding-visitors-in-realtime-by-josef-adersberger-19-638.jpg?cb=1456285460" alt="connection_streaming_batch" /></p>
+<p>Note that realtime here means 15 mins so a low latency streaming engine like Storm is overengineered. It's, however, a sweet spot for Spark Streaming given the other components in the system are also based on Spark.</p>
+<h2>Core</h2>
+<p>Spark 2.0 will add an infinite Dataframes API for Spark Streaming, unified with the existing Dataframes API for batch processing.  Event-time aggregations will finally arrive in Spark Streaming.</p>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/events/keynote-day-3/">The Future of Real-Time in Spark</a> by Reynold Xin, Databricks</li>
+<li><a href="https://spark-summit.org/east-2016/events/structuring-spark-dataframes-datasets-and-streaming/">Structuring Spark Dataframes, Datasets and Streaming</a> by Michael Amburst, Databricks.</li>
+</ol>
+<p>Meanwhile, Back pressure and Elastic Scaling are two important features under development.</p>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/events/building-robust-scalable-and-adaptive-applications-on-spark-streaming/">Reactive Streams, linking Reactive Application to Spark Streaming</a> by Luc Bourlier, Lightbend.</li>
+<li><a href="https://spark-summit.org/east-2016/events/reactive-streams-linking-reactive-application-to-spark-streaming/">Building Robust, Scalable and Adaptive Applications on Spark Streaming</a> by Tathagata Das, Databricks.</li>
+</ol>
+<h2>Connectors</h2>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/events/realtime-risk-management-using-kafka-python-and-spark-streaming/">Realtime Risk Management Using Kafka, Python, and Spark Streaming</a> at Shopify.</li>
+<li><a href="https://spark-summit.org/east-2016/events/building-realtime-data-pipelines-with-kafka-connect-and-spark-streaming/">Building Realtime Data Pipelines with Kafka Connect and Spark Streaming</a> by Confluent. This is more about <a href="http://docs.confluent.io/2.0.0/connect/">Kafka connnect</a> than Spark Streaming.</li>
+</ol>
+<h2>Use cases</h2>
+<p>Other less interesting use cases</p>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/events/interactive-visualization-of-streaming-data-powered-by-spark/">Interactive Visualization of Streaming Data Powered by Spark</a> introduces streaming data visualization at <a href="http://www.zoomdata.com/">Zoomdata</a>.</li>
+<li><a href="https://spark-summit.org/east-2016/events/online-predictive-modeling-of-fraud-schemes-from-mulitple-live-streams/">Online Predictive Modeling of Fraud Schemes from Mulitple Live Streams</a> at Atigeo.</li>
+<li><a href="https://spark-summit.org/east-2016/events/using-spark-to-analyze-activity-and-performance-in-high-speed-trading-environments/">Using Spark to Analyze Activity and Performance in High Speed Trading Environments</a></li>
+</ol>
+<h2>References</h2>
+<ol>
+<li><a href="https://spark-summit.org/east-2016/schedule/">https://spark-summit.org/east-2016/schedule/</a></li>
+</ol>
+</div><div></div></div></body></html>

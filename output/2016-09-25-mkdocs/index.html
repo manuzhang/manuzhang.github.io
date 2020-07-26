@@ -1,0 +1,65 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Rebuild Gearpump documentation with MkDocs</h1><p><em>(Disclamer: I am a committer of Apache Gearpump(incubating))</em></p>
+<h2>What's wrong with Jekyll</h2>
+<p><a href="http://gearpump.apache.org/">Apache Gearpump(incubating)</a> website is currently built with Jekyll, the most popular <a href="https://staticsitegenerators.net/">static site generator</a>. Most of the contents are written in <a href="https://daringfireball.net/projects/markdown/">Markdown</a> while Jekyll allows you to mix in HTMLs. With the default &quot;Bootstrap&quot; style theme, the website has a two-level top navigation bar. That is good for a general blog but not for documentations because the items are hidden in the pull-down menu and there is no table of contents for each page. First-time visitors won't know what to look for or which menu to click on.</p>
+<p>I prefer the &quot;ReadTheDocs&quot; style like <a href="http://docs.confluent.io">Confluent's Doc site</a> where all the items are shown on the sidebar. If you click on one item, it will be collapsed into a multi-level table of contents and it's easy to go back and forth. I've been searching for such themes in Jekyll but the closest I've found is <a href="http://idratherbewriting.com/documentation-theme-jekyll/mydoc_sidebar_navigation.html">Jekyll Doc Theme</a>. However, the table of contents of a page lies at the head of contents which I think is not convenient for navigation. Confluent's Doc site is built with <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> and the sources are written in <a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. I didn't want to raise the bar for contributors by learning another markup language so I started to look for alternative generators that support Markdown.</p>
+<p><a href="http://www.mkdocs.org/">MkDocs</a> is by far the best answer with both Markdown sources and built-in &quot;ReadTheDocs&quot; theme. Then I started to rebuild documentations with MkDocs. It's not a smooth transition and I'd like to record the roadblocks.</p>
+<h2>Roadblocks</h2>
+<h3>Global Variables</h3>
+<p>We may have version numbers in the documentation here and there. For example,</p>
+<pre><code class="language-bash">### To run WordCount example
+bin/gear app -jar examples/wordcount-2.11-0.8.1-assembly.jar org.apache.gearpump.streaming.examples.wordcount.WordCount
+</code></pre>
+<p>There are two version numbers here, scala version(2.11) and gearpump version(0.8.1). We don't want to hardcode the numbers which would mean updating all the numbers whenever a new version of Gearpump is released. We want variables. In Jekyll, we can define version numbers as <a href="https://jekyllrb.com/docs/variables/">variables</a> in configuration files. Unfortunately, MkDocs hasn't supported variables for Markdown source yet and the work is still <a href="https://github.com/mkdocs/mkdocs/issues/304">under discussion</a>.</p>
+<p>In the discussion thread, someone shared a work-around where markdown sources are pre-processed with a template system like <a href="http://mustache.github.io/">mustache</a> and variables will be replaced with corresponding values. The previous example is now written as</p>
+<p>{% raw %}</p>
+<pre><code class="language-bash">### To run WordCount example
+bin/gear app -jar examples/wordcount-{{SCALA_BINARY_VERSION}}-{{GEARPUMP_VERSION}}-assembly.jar org.apache.gearpump.streaming.examples.wordcount.WordCount
+</code></pre>
+<p>{% endraw %}</p>
+<p>and the variables are defined in a yaml file</p>
+<pre><code class="language-yaml">---
+GEARPUMP_VERSION: &quot;0.8.2-SNAPSHOT&quot;
+SCALA_BINARY_VERSION: &quot;2.11&quot;
+SCALA_VERSION: &quot;2.11.8&quot;
+---
+</code></pre>
+<p>Also, I added scripts to copy documentations to a temporary directory and traverse down the directory pre-processing source with mustache.</p>
+<p>Finally, update <code class='language-text'>docs_dir</code> configuration from the default <code class='language-text'>docs</code> to <code class='language-text'>tmp</code> in <code class='language-text'>mkdocs.yml</code>.</p>
+<pre><code class="language-yaml">docs_dir: tmp
+</code></pre>
+<p>My first thought was to pre-process the HTMLs in <code class='language-text'>site</code> but they got overwritten when I run <code class='language-text'>mkdocs serve</code>.</p>
+<h3>Code Blocks</h3>
+<p>Existing code examples are written in fenced code blocks from <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">GitHub Flavored Markdown</a>. MkDocs uses <a href="https://pythonhosted.org/Markdown/">Python Markdown</a> library to translate Markdown files into HTML. Python-Markdown has <code class='language-text'>fenced_code</code> extensions but there is a warning that</p>
+<blockquote>
+<p>Fenced Code Blocks are only supported at the document root level. Therefore, they cannot be nested inside lists or blockquotes.</p>
+</blockquote>
+<p>A downside of markdown is many implementations do not enforce markdown syntax, for example, &quot;each subsequent paragraph in a list item must be indented by either 4 spaces or one tab&quot;. This is enforced in Python-Markdown.</p>
+<p>For code blocks inside list, we indent by 8 spaces or two tabs and use <code class='language-text'>codehilite</code> extensions.</p>
+<pre><code class="language-text">1. item1 
+
+		:::scala
+		# Code goes here ...
+
+2. item2
+3. item3
+</code></pre>
+<p>There is a <a href="https://github.com/waylan/Python-Markdown/issues/471">bug</a> when using both <code class='language-text'>fenced_code</code> and <code class='language-text'>codehilite</code> extensions. Meanwhile I think it's better to stick to one style so I replaced all fenced code blocks with <code class='language-text'>codehilite</code> syntax.</p>
+<p>Remember to add the markdown extension in <code class='language-text'>mkdocs.yml</code>,</p>
+<pre><code class="language-yml">markdown_extensions:
+    - codehilite:
+        use_pygments: False
+</code></pre>
+<p>I switched off Pygments highlights since it caused a line of code to overflow if it is too long.</p>
+<h3>Unsolved issues</h3>
+<p>With the above roadblocks moved aside, the new documentation is good to go although some minor issues remain unsolved yet.</p>
+<ul>
+<li><a href="https://github.com/mkdocs/mkdocs/issues/834">Markdown tables expand beyond window with no scrollbar</a>.</li>
+<li>tabs to switch between different language implementations of an example. (e.g. <a href="http://spark.apache.org/docs/latest/quick-start.html#self-contained-applications">self-contained-applications</a> in Spark docs)</li>
+</ul>
+<h2>Summary</h2>
+<p>Here is a comparison of documentations before and after the change.</p>
+<p><img src="https://lh3.googleusercontent.com/gr4nW03d8caedR9N4y1dYoGTy25YSU1vZHzjFEj0SRzHy0eoQmoelKFwDXEuwibnwf0s39vwOR5QuB_W55rWHXjGeqTWGUuiHbPP05on9fR9ECOliDdBtGYXdOEdstYvhlphLUwZ-uXDsyK1jmBrZcBrkmcKcwFToVlodi6RmZ2iXnXJhflAddknVtseCOFlR42krWfq0WWJZGcwPag9B45vBDEiRoJuWfCvK_DB3hP9WXPiv2HdvDjqq91kqft3BXKz6-fBSIBHp2q6R_zzLv_RZahKmmI70JVUlwQdpi7qDt3VjEnwj--K_JvwdNMarLsAjb-9N3AIihfLUXzSU61_vCKBn21JrnTcEMpVKiiJstxDGxbMs1pZpKUutxUpM3HIq1dMtlKnGtRjkTQObEetsxFz3NdAPBIEe5yDr2gyC1rz_JUqCS3J0KO2_hiZmR4P5ephNEAlYXkciCoRq061EcOuTmnndo-AJwMHy82_GN28Diey8rArUbQu4-9GED6mUfwx8LJ2glIqfOkcnSzItV2UGSMsMthanY7bVZ894e-rMW51QjSTTyir4eEMN0guZRlsyTRdRncS9IEa2d8SnIpOfATOVMOeuDtyK6NcYy88=w1336-h759-no" alt="before" /></p>
+<p><img src="https://lh3.googleusercontent.com/YkGzEayBztA5Ie922eYwutYdjQOUVQhS0gFa-TiBhsbV46sqr9I72yIdIX_qw75vFSP4Ex7798cJLsge1LQaxtU5k6RShuLDECuXnQ7FtAS2zW3-vt3gC2ZgMrNfJqg4Y_JBuQOWA4xidM9ps4XTI7C0780NCs129m2qplKC1LaF0EaOf_f2w10O6G89eArRCksJ2wqSifysdjbqUUQzPtDAr_X3WAdFM7YQFDucYczEK8p-IFSgEiRurMxpT0CWhkGZf7VmNRel9cG_puiMtoDEksTYRUxeZnNXMWXpqMsTcTfVe3DpMvR2ugrhk1Aic8fMT7rbFhFMdcFT4sqb6G4sw2lAIQiDf4kMLuMUtLVDS-LGvu6GWo3PdPOEej-lLQuZ-RbuTt40qJAqbmIUJ88SwR7vnYfGggqeFKAv3HHqSY1nsUoP27O_U_pVQJqFTynhNRctDxuUtrO2EWWjArXT_3NcJ0tim_8NT2S7lwbozlk4KId3caf29zncZXDUN7wMCkz8GblhcID5JTqq8PxENDpkIadTY2-x-IJ97nDnT2cBeDQtsNVxuCz2uUUISlbvFtqKutWoP89dRRpSACvt4ju3kv6NLNbAqY8QxxajoJg_=w1351-h759-no" alt="after" /></p>
+<p>The details are at <a href="https://github.com/apache/incubator-gearpump/pull/88">https://github.com/apache/incubator-gearpump/pull/88</a>.</p>
+<p>This seems a lot of work but I believe it's worth transiting to a doc style that helps users to learn Gearpump more easily.</p>
+</div><div></div></div></body></html>

@@ -1,0 +1,98 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>The hidden cost of Spark withColumn</h1><p>Recently, we've been working on machine learning pipeline with Spark, where <a href="https://spark.apache.org/sql/">Spark SQL &amp; DataFrame</a> is used for data preprocessing and <a href="https://spark.apache.org/mllib/">MLlib</a> for training. In one use case, the data source is a very wide Hive table of ~1000 columns. The columns are stored in String so we need to cast them to Integer before they can be fed into model training.</p>
+<p>This was what I got initially with DataFrame Scala API (2.2.0).</p>
+<pre><code class="language-scala">df.columns.foldLeft(df) { case (df, col) =&gt;
+  df.withColumn(col, df(col).cast(IntegerType))
+}
+</code></pre>
+<p>Since DataFrame is immutable, I created a new <code class='language-text'>DataFrame</code> for each <code class='language-text'>Column</code> casted using <code class='language-text'>withColumn</code>. I didn't think that was be a big deal since at run time all columns would be casted in one shot thanks to <a href="https://databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html">Spark's Catalyst optimizer</a>.</p>
+<blockquote>
+<p>At its core, Catalyst contains a general library for representing trees and applying rules to manipulate them. On top of this framework, we have built libraries specific to relational query processing (e.g., expressions, logical query plans), and several sets of rules that handle different phases of query execution: analysis, logical optimization, physical planning, and code generation to compile parts of queries to Java bytecode</p>
+</blockquote>
+<p>To my surprise, the job stuck in submission for minutes without outputting anything. Luckily, I have a nice colleague Vincent who saved my day with the following fix.</p>
+<pre><code class="language-scala">df.select(df.columns.map { col =&gt;
+  df(col).cast(IntegerType)
+}: _*)
+</code></pre>
+<p>He suspected that it's expensive to call <code class='language-text'>withColumn</code> for a thousand times. Hence, he dived into its implementation and found out the above in the private method <code class='language-text'>withColumns</code> called by <code class='language-text'>withColumn</code>. In his fast version, only one new <code class='language-text'>DataFrame</code> was created.</p>
+<p>I wondered why there was a significant cost difference and looked further into it. After turning on the debug log, I saw a lot of <code class='language-text'>=== Result of Batch Resolution ===</code>s in my slow version. It suddenly struck me that Catalyst's analysis might not be free. A thousand <code class='language-text'>withColumn</code>s were actually a thousand times of analysis, which held true for all APIs on <code class='language-text'>DataFrame</code>. On the other hand, analysis of transform on <code class='language-text'>Column</code> was actually lazy.</p>
+<p>The log led me to <code class='language-text'>org.apache.spark.sql.catalyst.rules.RuleExecutor</code> where I  spotted a <code class='language-text'>timeMap</code> tracking time running specific rules. What's more exciting, the statistics was exposed through <code class='language-text'>RuleExecutor.dumpTimeSpent</code> which I could add to compare the costs in two versions.</p>
+<pre><code class="language-scala">df.columns.foldLeft(df) { case (df, col) =&gt;
+  println(RuleExecutor.dumpTimeSpent())
+  df.withColumn(col, df(col).cast(IntegerType))
+}
+println(RuleExecutor.dumpTimeSpent())
+
+df.select(df.columns.map { col =&gt;
+  println(RuleExecutor.dumpTimeSpent())
+  df(col).cast(IntegerType)
+}: _*)
+println(RuleExecutor.dumpTimeSpent())
+
+</code></pre>
+<p>As expected, the time spent increased for each <code class='language-text'>DataFrame#withColumn</code> while that stayed the same for <code class='language-text'>Column#cast</code>. It would take about 100ms for one round of analysis. (I have a table of time spent for all 56 rules in 100 <code class='language-text'>withColumn</code> calls in appendix if you are curious).</p>
+<h3>Summary</h3>
+<ol>
+<li>The hidden cost of <code class='language-text'>withColumn</code> is Spark Catalyst's analysis time.</li>
+<li>The time spent in Catalyst analysis is usually negligible but it will become an issue when there is a large number of transforms on <code class='language-text'>DataFrame</code>. It's not unusual for a model to have 1000 features which may require preprocessing.</li>
+<li>Don't create a new <code class='language-text'>DataFrame</code> for each transform on <code class='language-text'>Column</code>. Create one at last with <code class='language-text'>DataFrame#select</code></li>
+</ol>
+<h3>Appendix</h3>
+<p>Rule | Nano Time
+---- | ---------
+org.apache.spark.sql.catalyst.analysis.Analyzer$FixNullability	|	489262230
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGroupingAnalytics	|	243030776
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$PropagateTypes	|	143141555
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveDeserializer	|	97690381
+org.apache.spark.sql.catalyst.analysis.ResolveCreateNamedStruct	|	87845664
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowFrame	|	85098172
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowOrder	|	83967566
+org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractWindowExpressions	|	63928074
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveReferences	|	56549170
+org.apache.spark.sql.catalyst.analysis.Analyzer$LookupFunctions	|	52411767
+org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractGenerator	|	24759815
+org.apache.spark.sql.catalyst.analysis.ResolveTimeZone	|	24078761
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolvePivot	|	23264984
+org.apache.spark.sql.catalyst.analysis.ResolveInlineTables	|	22864548
+org.apache.spark.sql.execution.datasources.FindDataSourceTable	|	22127481
+org.apache.spark.sql.catalyst.analysis.DecimalPrecision	|	20855512
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$ImplicitTypeCasts	|	19908820
+org.apache.spark.sql.catalyst.analysis.TimeWindowing	|	17289560
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$DateTimeOperations	|	16691649
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$FunctionArgumentConversion	|	16645812
+org.apache.spark.sql.catalyst.analysis.ResolveHints$ResolveBroadcastHints	|	16391773
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveFunctions	|	16094905
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$InConversion	|	15937875
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$PromoteStrings	|	15659420
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$IfCoercion	|	15131194
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$BooleanEquality	|	15120505
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$Division	|	14657587
+org.apache.spark.sql.execution.datasources.PreprocessTableCreation	|	12421808
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveSubquery	|	12330915
+org.apache.spark.sql.catalyst.analysis.UpdateOuterReferences	|	11919954
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$CaseWhenCoercion	|	11807169
+org.apache.spark.sql.catalyst.analysis.EliminateUnions	|	11761260
+org.apache.spark.sql.catalyst.analysis.SubstituteUnresolvedOrdinals	|	11683297
+org.apache.spark.sql.catalyst.analysis.ResolveHints$RemoveAllHints	|	11363987
+org.apache.spark.sql.execution.datasources.DataSourceAnalysis	|	11253060
+org.apache.spark.sql.catalyst.analysis.Analyzer$HandleNullInputsForUDF	|	11075682
+org.apache.spark.sql.execution.datasources.PreprocessTableInsertion	|	11061610
+org.apache.spark.sql.catalyst.analysis.Analyzer$GlobalAggregates	|	10708386
+org.apache.spark.sql.catalyst.analysis.CleanupAliases	|	9447785
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAliases	|	4725210
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNewInstance	|	3634067
+org.apache.spark.sql.catalyst.analysis.Analyzer$CTESubstitution	|	2359406
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveOrdinalInOrderByAndGroupBy	|	2191643
+org.apache.spark.sql.catalyst.analysis.ResolveTableValuedFunctions	|	2160003
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveRelations	|	2095181
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggregateFunctions	|	2029468
+org.apache.spark.sql.catalyst.analysis.TypeCoercion$WidenSetOperationTypes	|	1999994
+org.apache.spark.sql.execution.datasources.ResolveSQLOnFile	|	1891759
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveMissingReferences	|	1864083
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNaturalAndUsingJoin	|	1856631
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggAliasInGroupBy	|	1740242
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGenerate	|	1714332
+org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveUpCast	|	1686660
+org.apache.spark.sql.catalyst.analysis.Analyzer$PullOutNondeterministic	|	1602061
+org.apache.spark.sql.catalyst.analysis.Analyzer$WindowsSubstitution	|	1406648
+org.apache.spark.sql.catalyst.analysis.AliasViewChild	|	1184166</p>
+</div><div></div></div></body></html>

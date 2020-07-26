@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Triweekly Reading 0xF</h1><p>Starting out this week, I'd like to share something different. It's <a href="http://manuginobili.com/my-showdown-with-mj/">My Showdown with MJ</a> by my hero Manu Ginobili recollecting his only game with Michael Jordan, his childhood hero. I believe it's called inheritance. I've always been fascinated by Manu's passion, his magic and how he saved his team and fans from despair. I even named myself &quot;Manu&quot;!</p>
+<p>Let's get back to technical session.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p>data Artisans guys <a href="http://data-artisans.com/stream-processing-myths-debunked/">debunked six stream processing myths</a>. These are long-time misconceptions on streaming people get from early versions of streaming systems.</p>
+<ul>
+<li>There's no streaming without batch</li>
+<li>Latency and Throughput: Choose One</li>
+<li>Micro-batching means better throughput</li>
+<li>Exactly once? Completely impossible</li>
+<li>Streaming only applies to &quot;real-time&quot;</li>
+</ul>
+</li>
+<li>
+<p>Ever heard of <a href="http://www.reactive-streams.org/">Reactive Streams</a> but wondering what it actually does? Let's get into <a href="https://medium.com/@kvnwbbr/a-journey-into-reactive-streams-5ee2a9cd7e29#.n8y4v6em0">A Journey into Reactive Streams</a>. Reactive Streams is a specification to solve stream processing problems and its implementations will be able to communicate via the Reactive Streams protocol.</p>
+</li>
+</ul>
+<h3>Scala</h3>
+<ul>
+<li>
+<p>Li haoyi <a href="http://www.lihaoyi.com/post/OldDesignPatternsinScala.html">explored how old design patterns apply apply to Scala</a>. I like his definition of <a href="https://en.wikipedia.org/wiki/Software_design_pattern">Design Patterns</a></p>
+<blockquote>
+<p>A Design Pattern is something you do over and over when building software, but isn't concrete enough to be made into a helper method, class or other abstraction.</p>
+</blockquote>
+<p>In short, Scala has built-in support for some Java design patterns in the language to make your programming easier and less error-prone.</p>
+</li>
+<li>
+<p>Not all people buy in Scala or functional programming. <a href="http://flyingfrogblog.blogspot.jp/2016/05/disadvantages-of-purely-functional.html">Disadvantages of purely functional programming</a> threw cold water on it. Given my short experience with Scala, a impurely functional programming, it's true that some data structures are not efficient and sometimes <a href="https://issues.apache.org/jira/browse/GEARPUMP-249">I got bitten by its laziness</a> but I will never go back to Java. In Java, after working out a solution, I spend extra time to figure out <strong>how to implement it</strong> while I can easily <strong>express it</strong> in Scala. I also like  <strong>immutable</strong> which reduces errors in my codes.</p>
+</li>
+<li>
+<p><a href="https://github.com/lampepfl/dotty/pull/1758">Functions with more than 22 parameters are now automatically converted to functions taking a single object array parameter</a>.</p>
+</li>
+<li>
+<p>Akka is <a href="http://blog.akka.io/artery/2016/12/05/aeron-in-artery">using Aeron as the underlying transport in the new remoting implementation (codenamed Artery) for Actor messages</a>. It is based on UDP, providing the same guarantees as TCP but more efficient.</p>
+<blockquote>
+<p>Artery is designed from the ground up to support high-throughput in the magnitude of 1 million messages per second and low-latency in the magnitude of 100 microseconds.</p>
+</blockquote>
+</li>
+</ul>
+<h3>Java</h3>
+<ul>
+<li>
+<p>Plumber share their experiences on <a href="https://plumbr.eu/blog/java/staying-on-top-of-the-jvm-crashes">the reasons why JVM crashes and where to look for evidence</a>.</p>
+</li>
+<li>
+<p>Takipi <a href="http://blog.takipi.com/is-standard-java-logging-dead-log4j-vs-log4j2-vs-logback-vs-java-util-logging">compare popular Java logging frameworks</a> from the logging statements used by GitHub's top Java projects.</p>
+</li>
+</ul>
+<h3>Programming</h3>
+<p>From Martin Fowler's Bliki (Blog + Wiki)</p>
+<ul>
+<li>
+<p><a href="http://martinfowler.com/bliki/FunctionLength.html">How long should a function be?</a>.</p>
+<blockquote>
+<p>The argument that makes most sense to me, however, is the separation between intention and implementation.</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://martinfowler.com/bliki/HiddenPrecision.html">Hidden precision can lead to some subtle bugs</a>.</p>
+<blockquote>
+<p>The more general conclusion is that floating point is tricksy when it comes to comparisons.</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://martinfowler.com/bliki/AliasingBug.html">Aliasing bug occurs when the same memory location is accessed through more than one reference</a>.</p>
+<blockquote>
+<p>So if we want changes to be shared, we need to handle that as the exception rather than the rule.</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://martinfowler.com/bliki/ValueObject.html">Value Objects should be immutable to avoid aliasing bugs</a>.</p>
+<blockquote>
+<p>Objects that are equal due to the value of their properties are called value objects.</p>
+</blockquote>
+</li>
+</ul>
+<h3>Others</h3>
+<ul>
+<li>
+<p>Google <a href="https://research.googleblog.com/2016/12/open-sourcing-embedding-projector-tool.html">open source the Embedding Projector for visualizing high dimensional data</a>.</p>
+</li>
+<li>
+<p>Do you know <a href="http://chris.beams.io/posts/git-commit/">how to write a git commit message</a>? The author gives seven rules of a great a git commit message.</p>
+</li>
+<li>
+<p>Apache HBase is built on HDFS. Theoretically, it could be ported to other Hadoop File Systems or general distributed file systems. <a href="https://aws.amazon.com/cn/blogs/big-data/low-latency-access-on-trillions-of-records-finras-architecture-using-apache-hbase-on-amazon-emr-with-amazon-s3/">FINRA migrated to HBase on EMR using S3 for storage and have lowered their costs by 60%</a>.</p>
+</li>
+<li>
+<p><a href="http://highscalability.com/blog/2016/11/28/how-to-make-your-database-200x-faster-without-having-to-pay.html">How To Make Your Database 200x Faster Without Having To Pay More?</a>. The key is returning 99.9%-accurate answers for low-priority queries, and 100% for the rest, or Approximate Query Processing. Some proposals are <a href="http://blinkdb.org/">BlinkDB</a> and <a href="http://www.snappydata.io/">SnappyData</a>.</p>
+</li>
+</ul>
+</div><div></div></div></body></html>

@@ -1,0 +1,61 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Monthly Reading 0xB</h1><p>It seems everyone in Big Data is doing Weekly / Bi-weekly / Monthly review. Here is my subscription list</p>
+<ul>
+<li><a href="https://www.hadoopweekly.com/">Hadoop Weekly</a> by <a href="https://twitter.com/joecrobak">Joe Crobak</a> (Weekly)</li>
+<li><a href="http://www.cakesolutions.net/teamblogs/this-week-in-scala-10/10/2016">This week in #Scala</a> by CakeSolutions (Weekly)</li>
+<li><a href="http://www.confluent.io/blog/log-compaction-highlights-apache-kafka-stream-processing-community-september-2016/">Log Compaction - Highlights in the Apache Kafka and Stream Processing Community</a> by Confluent (Monthly)</li>
+<li><a href="https://databricks.com/blog/2016/10/04/databricks-bi-weekly-apache-spark-digest-10316.html">Databricks Bi-Weekly Apache Spark Digest</a> by Databricks (Bi-Weekly)</li>
+<li><a href="https://www.lightbend.com/blog/lightbend-tech-digest-september-2016">Lightbend Tech Digest</a> by Lightbend (Monthly)</li>
+<li><a href="http://data-artisans.com/sept-2016-in-review/">Montly Review</a> by dataArtisans (Monthly)</li>
+</ul>
+<p>Now I'm writing up a review based on reviews.</p>
+<h3>Releases</h3>
+<p>A bunch of maintenace releases from the open source community.</p>
+<ul>
+<li><a href="https://storm.apache.org/2016/09/14/storm0102-released.html">Apache Storm made a maintenance release 0.10.2 for 0.10</a>.</li>
+<li><a href="http://flink.apache.org/news/2016/10/12/release-1.1.3.html">Apache Flink released 1.1.3</a>, bugfix release for 1.1 series. RocksDB state backend users are recommended to use the &quot;fully async&quot; mode such that upgrade to 1.2 will be easier.</li>
+<li><a href="http://spark.apache.org/releases/spark-release-2-0-1.html">Apache Spark also made a maintenance release 2.0.1</a> containing 300 stability and bug fixes.</li>
+<li>Apache Calcite released <a href="https://calcite.apache.org/docs/history.html#v1-10-0">1.10.0</a> and <a href="https://calcite.apache.org/docs/history.html#v1-9-0">1.9.0</a>, and mainly improved Druid Adapter.</li>
+</ul>
+<h3>Conferences</h3>
+<ul>
+<li>
+<p><a href="http://flink-forward.org/thank-you/#more-1037">Flink Forward 2016</a> was held from Sep.12th to Sep.14th with 350 attendees and over 40 speakers. Videos and slides for all <a href="http://flink-forward.org/program/sessions/">sessions</a> are available now. After a quick glance through, I come up with this list of mainly technical talks which nicely capture the current status and next steps of Flink.</p>
+<ul>
+<li><a href="http://flink-forward.org/kb_sessions/connecting-apache-flink-with-the-world-reviewing-the-streaming-connectors/">Connecting Apache Flink to the World: Reviewing the streaming connectors</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/declarative-stream-processing-with-streamsql-and-cep/">Declarative stream processing with StreamSQL and CEP</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/dynamic-scaling-how-apache-flink-adapts-to-changing-workloads/">Dynamic scaling: How Apache Flink adapts to changing workloads</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/running-apache-flink-everywhere-standalone-yarn-mesos-docker-kubernetes-etc/">Running Apache Flink everywhere: Standalone, Yarn, Mesos, Docker, Kubernetes, etc.</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/scaling-stream-processing-with-apache-flink-to-very-large-state/">Scaling Stream Processing with Apache Flink to very large State</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/streaming-ml-with-flink/">Streaming ML with Flink
+</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/taking-a-look-under-the-hood-of-apache-flinks-relational-apis/">Taking a look under the hood of Apache Flink’s relational APIs</a></li>
+<li><a href="http://flink-forward.org/kb_sessions/the-future-of-apache-flinktm/">The Future of Apache Flink</a></li>
+</ul>
+</li>
+<li>
+<p><a href="https://www.reactivesummit.org/">Reactive Summit 2016</a>, the first ever Reactive Summit, took place Oct.4 - Oct.5 in Austin. All talks are now <a href="https://www.youtube.com/channel/UChUrUs_xAW2YiSV7iBWkzhw/videos">available</a>. I haven't gone through the topics but <a href="http://sched.co/7jeY">Implementing an akka-streams materializer for big data</a> by our <a href="https://twitter.com/kkasravi">Kam</a> is definitely worth checking out.</p>
+</li>
+</ul>
+<h3>Articles</h3>
+<ul>
+<li>
+<p><a href="http://www.infoworld.com/article/3128344/analytics/7-big-data-tools-to-ditch-in-2017.html">7-big-data-tools-to-ditch-in-2017</a>. Both MapReduce and its streaming counterpart Storm make the list. Wait, are you sure to ditch Java ?</p>
+</li>
+<li>
+<p><a href="https://medium.baqend.com/real-time-stream-processors-a-survey-and-decision-guidance-6d248f692056#.ws1mi2eb9">Scalable Stream Processing: A Survey of Storm, Samza, Spark and Flink</a></p>
+<blockquote>
+<p>give an overview over the state of the art of stream processors for low-latency Big Data analytics and conduct a qualitative comparison of the most popular contenders</p>
+</blockquote>
+</li>
+<li>
+<p>4-min read on <a href="https://medium.com/the-hoard/how-kafkas-storage-internals-work-3a29b02e026#.gwuov9szg">How Kafka’s Storage Internals Work</a>. A big fan of such short informative stories.</p>
+</li>
+<li>
+<p>Jay Kreps has a new masterpiece, <a href="http://www.confluent.io/blog/sharing-is-caring-multi-tenancy-in-distributed-data-systems">Sharing is Caring: Multi-tenancy in Distributed Data Systems</a></p>
+<blockquote>
+<p>You see hundreds of blog posts on benchmarking infrastructure systems—showing millions of requests per second on vast clusters—but far fewer about the work of scaling a system to hundreds or thousands of engineers and use cases. It’s just a lot harder to quantify multi-tenancy than it is to quantify scalability.</p>
+</blockquote>
+<p>Can't agree more ! A multi-tenancy benchmark, anyone ? I'll leave you here to think more about this topic.</p>
+</li>
+</ul>
+</div><div></div></div></body></html>

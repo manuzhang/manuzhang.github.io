@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Weekly Reading 0x11</h1><p>Last week, we mentioned <a href="https://cloudplatform.googleblog.com/2017/02/introducing-Cloud-Spanner-a-global-database-service-for-mission-critical-applications.html">announcement of Google Cloud Spanner</a>. There is an &quot;open source version&quot;, <a href="https://github.com/cockroachdb/cockroach">CockroachDB</a>, built by three ex-Googlers who also founded a company around it. We would read about how <a href="https://www.nextplatform.com/2017/02/22/google-spanner-inspires-cockroachdb-outrun/">Google Spanner Inspires CockroachDB To Outrun It</a> this week.</p>
+<p>Without Google's private network and atomic clock, CockroachDB provides serializer isolation, weaker than Spanner's linearizable isolation. CockRoachDB is based on <a href="http://rocksdb.org/">RocksDB</a> using <a href="https://github.com/coreos/etcd">etcd</a>(<a href="https://raft.github.io/raft.pdf">Raft</a>) for consensus. It has compatible interface with Postgres, supporting most SQL 92, some SQL 2011 and Spanner functions. They've employed <a href="http://jepsen.io/analyses/cockroachdb-beta-20160829">jepsen for consistency analysis</a> and found bugs leading to serializability violations. The software is still in beta at the time of writing. Let's see how it will turn out.</p>
+<p>Now, what else ?</p>
+<h3>Releases</h3>
+<ul>
+<li>
+<p><a href="https://blogs.apache.org/samza/entry/announcing-the-release-of-apache">Apache Samza 0.12.0 has been released</a> with the support of both unbounded and bounded sources, or &quot;Convergence of Batch and Real-time processing&quot; as said.</p>
+</li>
+<li>
+<p><a href="https://archive.apache.org/dist/kafka/0.10.2.0/RELEASE_NOTES.html">Apache Kafka has made a feature release 0.10.2.0</a> which includes the completion of 15 KIPs, over 200 bug fixes and improvements. Among them are supports for session windows and global table in Kafka Streams.</p>
+</li>
+</ul>
+<h3>Docker</h3>
+<ul>
+<li>We <a href="http://manuzhang.github.io/2016/01/28/unikernel.html">talked about Unikernel</a> one year ago, which can only be run on Xen hypervisor then. Now <a href="http://www.eweek.com/cloud/mirageos-unikernel-effort-moves-forward.html">the Unikernel operating system MirageOS supports the KVM hypervisor</a>. MirageOS components have been used to <a href="http://www.eweek.com/virtualization/docker-goes-native-for-windows-and-mac.html">enable native Docker on macOS and Windows</a> instead of running on VirtualBox.</li>
+</ul>
+<h3>Google</h3>
+<ul>
+<li>
+<p>Sharing our experiences with Virtual Reality(VR) can't be difficult, and that's where <a href="https://www.youtube.com/watch?v=lAFpA1AGs4E">Mixed Reality</a>(MR) comes in. With MR, we can see the virtual environment of a VR user except the facial expressions blocked by the headset. Now Google researchers have been <a href="https://research.googleblog.com/2017/02/headset-removal-for-virtual-and-mixed.html">working on a solution to &quot;remove&quot; the headset</a>.</p>
+</li>
+<li>
+<p>Preprocessing is required to apply machine learning to real world datasets, which can be done <em>separately</em> through a large scale data processing framework such as <a href="http://spark.apache.org/">Apache Spark</a> and <a href="http://flink.apache.org/">Apache Flink</a>. Now Google <a href="https://research.googleblog.com/2017/02/preprocessing-for-machine-learning-with.html">announced tf.Transform to make it part of a TensorFlow graph</a>. That is achieved through <a href="https://beam.apache.org/">Apache Beam</a>  whose applications can be run on Spark, Flink and Google's own <a href="https://cloud.google.com/dataflow">Cloud Dataflow</a>.</p>
+</li>
+<li>
+<p>A piece of &quot;old&quot; news from Google, <a href="https://research.googleblog.com/2017/02/announcing-tensorflow-fold-deep.html">Announcing TensorFlow Fold: Deep Learning With Dynamic Computation Graphs</a>. TensorFlow Fold is to address challenge that data of varying size and structure don't batch together. You may read their <a href="https://arxiv.org/abs/1702.02181">paper</a> for more details.</p>
+</li>
+</ul>
+<h3>Security</h3>
+<ul>
+<li>
+<p>Google <a href="https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html">has found the first SHA1 collision</a>.</p>
+<blockquote>
+<p>The attacker could then use this collision to deceive systems that rely on hashes into accepting a malicious file in place of its benign counterpart. For example, two insurance contracts with drastically different terms.</p>
+</blockquote>
+<p>Here is [an interesting site showing lifetimes of cryptographic hash functions](cryptographic hash functions).</p>
+</li>
+<li>
+<p>The other breaking news is <a href="https://medium.com/@octal/cloudbleed-how-to-deal-with-it-150e907fd165#.qn9jsos51">CloudBleed</a></p>
+<blockquote>
+<p>Essentially, web requests to Cloudflare-backed sites received answers which included random information from other Cloudflare-backed sites!</p>
+</blockquote>
+<p>Here is <a href="https://github.com/pirate/sites-using-cloudflare">a list of possibly affected domains</a>.</p>
+</li>
+<li>
+<p>Dropbox have <a href="https://blogs.dropbox.com/tech/2017/02/meet-securitybot-open-sourcing-automated-security-at-scale/">open sourced Securitybot</a>, to &quot;automatically confirm and aggregate suspicious behavior with employees on a distributed scale&quot;.</p>
+</li>
+</ul>
+<p>That's all for the week. Super happy to keep up the momentum.</p>
+</div><div></div></div></body></html>

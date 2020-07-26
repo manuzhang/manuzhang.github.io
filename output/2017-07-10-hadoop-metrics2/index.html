@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A layout example that shows off a blog page with a list of posts." /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">My Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li></ul></nav></div></div></div><div class="content pure-u-1 pure-u-md-3-4"><h1>Instrument NameNode metrics with Hadoop Metrics2</h1><p>Recently at work, we need to collect the metrics of users accessing HDFS, e.g. how many times a user has read a file, to help users adjust their storage policies (For more on background, please refer to <a href="https://issues.apache.org/jira/browse/HDFS-7343">HDFS-7343</a> and <a href="https://github.com/Intel-bigdata/SSM">Smart Storage Management</a>). Unfortunately, that is not available in the <a href="https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/Metrics.html">existing (Hadoop 2.7.3) metrics</a> which means we have to hack NameNode (who knows it when users access HDFS files) ourselves. Fortunately, we don't have to start from scratch since Hadoop already provides a pluggable metrics framework, <a href="https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/metrics2/package-summary.html">Hadoop Metrics2</a>,</p>
+<blockquote>
+<p>The framework provides a variety of ways to implement metrics instrumentation easily via the simple MetricsSource interface or the even simpler and more concise and declarative metrics annotations. The consumers of metrics just need to implement the simple MetricsSink interface. Producers register the metrics sources with a metrics system, while consumers register the sinks. A default metrics system is provided to marshal metrics from sources to sinks based on (per source/sink) configuration options...</p>
+</blockquote>
+<p>Specifically for our requirement, we need to</p>
+<ol>
+<li>Implement a <code class='language-text'>MetricsSource</code> inside NameNode that record users accessing file.</li>
+<li>Implement a <code class='language-text'>MetricsSink</code> that write the metrics somewhere (e.g. HDFS).</li>
+<li>Finally, hook them together.</li>
+</ol>
+<p>The default metrics system is a singleton so that we have to add our <code class='language-text'>MetricsSource</code> into the existing <code class='language-text'>NameNodeMetrics</code>.</p>
+<p>Here is the big picture of the metrics flow. The blue parts are already provided while the red parts should be implemented.</p>
+<p><img src="https://goo.gl/v9MuvS" alt="hadoop_metrics2" />{:height=&quot;200px&quot; width=&quot;650px&quot;}</p>
+<h2>MetricsSource</h2>
+<p>As said in the doc, there are two ways to write a <code class='language-text'>MetricsSource</code>. The simpler and more limited one is <code class='language-text'>@Metrics</code> annotation.</p>
+<h3><code class='language-text'>@Metrics</code> annotation</h3>
+<p>For example, the <a href="https://github.com/apache/hadoop/blob/branch-2.7.3/hadoop-hdfs-project/hadoop-hdfs/src/main/java/org/apache/hadoop/hdfs/server/namenode/metrics/NameNodeMetrics.java">NameNodeMetrics</a>, where<code class='language-text'>@Metric</code> is used to indict a metrics source.</p>
+<pre><code class="language-java">@Metrics(name=&quot;NameNodeActivity&quot;, about=&quot;NameNode metrics&quot;, context=&quot;dfs&quot;)
+public class NameNodeMetrics {
+  ...
+  @Metric MutableCounterLong createFileOps;
+  @Metric MutableCounterLong filesCreated;
+  @Metric MutableCounterLong filesAppended;
+  
+  FileAccessMetrics fileAccessMetrics;
+  ...
+}
+</code></pre>
+<p>The limitation is the class must have at least one <code class='language-text'>@Metric</code> field, whose class has to extend <code class='language-text'>MutableMetric</code>.  Other than that, we are free to add any <code class='language-text'>MetricsSource</code>, for instance, the <code class='language-text'>FileAccessMetrics</code> we are going to implement.</p>
+<h3>Implementing <code class='language-text'>MetricsSource</code></h3>
+<pre><code class="language-java">public class FileAccessMetrics implements MetricsSource {
+  public static final String NAME = &quot;FileAccessMetrics&quot;;
+  public static final String DESC = &quot;FileAccessMetrics&quot;;
+  public static final String CONTEXT_VALUE =&quot;file_access&quot;;
+
+  private List&lt;Info&gt; infos = new LinkedList&lt;&gt;();
+
+  public static FileAccessMetrics create(MetricsSystem ms) {
+    return ms.register(NAME, DESC, new FileAccessMetrics());
+ }
+
+  public synchronized void addMetrics(String path, String user, long time) {
+    infos.add(new Info(path, user, time));
+  }
+
+  @Override
+  public void getMetrics(MetricsCollector collector, boolean all) {
+    for (Info info: infos) {
+      MetricsRecordBuilder rb = collector.addRecord(info).setContext(CONTEXT_VALUE);
+      rb.addGauge(info, 1);
+    }
+    infos.clear();
+  }
+</code></pre>
+<p>Distilling it,</p>
+<ul>
+<li><code class='language-text'>NameNodeMetrics</code> will <code class='language-text'>create</code> this <code class='language-text'>FileAccessMetrics</code>.</li>
+<li>Whenever <code class='language-text'>DFSClient</code> opens a read call, <code class='language-text'>NameNode</code> will <code class='language-text'>addMetrics(Info(path, user, time)</code> to the list.</li>
+<li>The <code class='language-text'>MetricsSystem</code> will periodically <code class='language-text'>getMetrics</code> from the list and put onto its internal queue.</li>
+<li>The <code class='language-text'>MetricsRecordBuilder</code> expect a numerical value so we do a small trick by storing the <code class='language-text'>Info</code> into the record name and setting the value to <code class='language-text'>1</code>.</li>
+<li>The <code class='language-text'>CONTEXT_VALUE</code> will be used later to identify the record for write.</li>
+</ul>
+<h2>MetricsSink</h2>
+<p>Periodically, <code class='language-text'>MetricsSystem</code> will poll its internal queue
+and <code class='language-text'>putMetrics</code> to <code class='language-text'>MetricsSink</code>, which can write it out as  follows.</p>
+<pre><code class="language-java">public class FileAccessMetrics implements MetricsSource {
+  ...
+  public static class Writer implements MetricsSink, Closeable {
+    ...
+    @Override
+    public void putMetrics(MetricsRecord record) {
+      ...
+      for (AbstractMetric metric : record.metrics()) {
+        currentOutStream.print(metric.name() + &quot;:&quot; + metric.value());
+      }
+      ...
+    }
+    ...
+  } 
+  ...
+}  
+</code></pre>
+<p>Note that Hadoop 3.x already packs a bunch of useful sinks</p>
+<ul>
+<li>RollingFileSystemSink (Hadoop FileSystem)</li>
+<li>KafkaSink</li>
+<li>GraphiteSink</li>
+<li>StatsDSink</li>
+</ul>
+<h2>Now, hook them together</h2>
+<p>Put the following configurations into either <code class='language-text'>hadoop-metrics2-namenode.properties</code> or <code class='language-text'>hadoop-metrics2.properties</code>.</p>
+<pre><code class="language-text">namenode.sink.file_access.class=org.apache.hadoop.hdfs.server.namenode.metrics.FileAccessMetrics$Writer
+namenode.sink.file_access.context=file_access
+</code></pre>
+<ul>
+<li><code class='language-text'>namenode</code> is the prefix with which <code class='language-text'>NameNodeMetrics</code> initialize the metrics system.</li>
+<li>The metrics system will firstly try to load <code class='language-text'>hadoop-metrics2-[prefix].properties</code> and fall back to <code class='language-text'>hadoop-metrics2.properties</code> if not found.</li>
+<li>The context value is exactly <code class='language-text'>FileAccessMetrics$CONTEXT_VALUE</code> such that <code class='language-text'>MetricsSystem</code> are able to filter out other <code class='language-text'>NameNodeMetrics</code> sources and only send <code class='language-text'>FileAccessMetrics</code> to our sink.</li>
+</ul>
+<h2>Summary</h2>
+<p>This post describes the architecture and usage of Hadoop metrics2 through an example to instrument user accessing HDFS files. However, I cannot cover all the features since I haven't tried them out myself so please refer to the <a href="http://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/metrics2/package-summary.html">official documentation</a>.</p>
+</div><div></div></div></body></html>
