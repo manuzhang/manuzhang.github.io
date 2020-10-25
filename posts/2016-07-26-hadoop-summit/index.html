@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Streaming at Hadoop Summit 2016</h1><p>2016-07-26<a class="home" href="../../">Home</a></p></div><p>This blog has been biased towards <em>Streaming</em> although I meant to write all things <em>Big Data</em>. This time I will look back at Streaming sessions of Hadoop Summit 2016 is held in San Jose from June 28 to June 30.  I didn't go to the event so all my take is based on  videos/slides of the <em>IoT and Streaming</em> track. You may checkout Zhang Zhe's <a href="http://zhe-thoughts.github.io/2016/07/11/Hadoop-Summit/">Notes from Hadoop Summit 2016</a> for HDFS news and <a href="http://hortonworks.com/blog/hadoop-summit-2016-growth-accelerates/">Hadoop Summit 2016: The Growth Accelerates - Hortonworks</a> from business's perspectives.</p>
+<h3>IoT Streaming</h3>
+<ul>
+<li>
+<p><a href="http://www.slideshare.net/HadoopSummit/connected-vehicle-data-platform">Connected Vehicle Data Platform</a> introduced Ford Motor's data platform with interesting data.</p>
+<blockquote>
+<p>A single Vehicle can generate 25GB of Controller Area Network (CAN) in a hour.</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://www.slideshare.net/HadoopSummit/building-a-smarter-home-with-apache-nifi-and-spark">Building a Smarter Home with Apache NiFi and Spark</a> builds around a mixed environment of edge, data center and cloud where <strong>Apache Nifi</strong> plays as a connector all over places.</p>
+</li>
+</ul>
+<h3>Streaming Engines</h3>
+<ul>
+<li>
+<p>While <strong>Flink</strong> author Kostas Tzoumas talked more about use cases at <a href="http://www.slideshare.net/KostasTzoumas/streaming-in-the-wild-with-apache-flink-63790942">Streaming in the Wild with Apache Flink</a>, Stephan Ewen dived deeper into technique details especially state management at <a href="http://www.slideshare.net/HadoopSummit/the-stream-processor-as-a-database-apache-flink">The Stream Processor as a Database Apache Flink</a>.</p>
+</li>
+<li>
+<p><a href="http://www.slideshare.net/HadoopSummit/next-gen-big-data-analytics-with-apache-apex">Next Gen Big Data Analytics with Apache Apex</a> gave a general introduction to stream processing engine, <strong>Apache Apex</strong>, from DataTorrent.</p>
+</li>
+<li>
+<p><strong>Storm</strong> PMC Chair Taylor Goetz talked about <a href="http://www.slideshare.net/HadoopSummit/the-future-of-apache-storm-63920895">The Future of Apache Storm</a>. Although about <em>future</em>, I found it the best documentation to learn about current status of Storm (1.0.1) so far. A major feature in the future is <a href="http://www.slideshare.net/HadoopSummit/resource-aware-scheduling-in-apache-spark">Resource Aware Scheduling</a></p>
+</li>
+<li>
+<p>Guozhang Wang talked about how <strong>Kafka Streams</strong> dealt with <em>streaming processing hard parts</em> in <a href="http://www.slideshare.net/HadoopSummit/stream-processing-made-simple-with-kafka">Stream Processing made simple with Kafka</a>.</p>
+</li>
+<li>
+<p><strong>Apache Calcite</strong> author Julian Hyde introduced <a href="http://www.slideshare.net/HadoopSummit/streaming-sql-63920557">Streaming SQL</a>, which is being integrated into Storm, Flink and Samza as SQL over streaming solution.</p>
+</li>
+<li>
+<p>With various batch and streaming engines, there is one to unify all, <a href="http://www.slideshare.net/HadoopSummit/apache-beam-a-unified-model-for-batch-and-stream-processing-data"><strong>Apache Beam</strong>: A unified model for batch and stream processing data</a></p>
+</li>
+</ul>
+<h3>Streaming platforms</h3>
+<ul>
+<li>
+<p>Streaming at Symantec has been used to process log and metrics data. They shared about their pipeline (Storm + ELK) and how they handled the influx issue in <a href="http://www.slideshare.net/HadoopSummit/in-flux-limiting-for-a-multitenant-logging-service">In Flux Limiting for a multi-tenant logging service</a>.</p>
+</li>
+<li>
+<p>Another sharing from Symantec which took close look at their <a href="http://www.slideshare.net/HadoopSummit/end-to-end-processing-of-37-million-telemetry-events-per-second-using-lambda-architecture">End to End Processing of 3.7 Million Telemetry Events per Second using Lambda Architecture
+</a>. The deck is full of practical contents like tuning parameters and benchmark results on Kafka, Storm(Trident), etc.</p>
+</li>
+<li>
+<p><a href="http://www.slideshare.net/HadoopSummit/lambdaless-stream-processing-scale-in-linkedin">Lambda-less Stream Processing @Scale in LinkedIn</a> went through how hard problems (<em>accurracy</em> and <em>reprocessing</em>) in stream processing had been solved without lambda architecture in Linkedin. The solution is based on <strong>Apache Samza</strong> and influenced by Google's <a href="http://research.google.com/pubs/pub41378.html">Millwheel</a>.</p>
+</li>
+</ul>
+<h3>Summary</h3>
+<p>Almost all Apache Streaming Engines made their presence at Hadoop Summit although it is biased towards Apache Nifi for obvious reasons. One can get a great bird view of existing streaming problems and solutions going through the contents.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

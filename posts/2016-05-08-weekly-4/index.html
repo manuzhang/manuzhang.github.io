@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Weekly Reading 0x4</h1><p>2016-05-08<a class="home" href="../../">Home</a></p></div><p>I'd like to start this week with something other than code but <a href="http://www.slideshare.net/LookAtMySlides/codeware">how to present code</a>. There are 5 basic rules to follow,</p>
+<ol>
+<li>use monospaced fonts</li>
+<li>use big fonts</li>
+<li>use syntax highlighting only where needed</li>
+<li>use ellipsis</li>
+<li>use screen annotation</li>
+</ol>
+<p><em>Remember your slides are not your IDE</em></p>
+<p>Now let's get down to code.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p>Unlike the batch world where Spark &quot;rules&quot; (Tez, Flink anyone?), the streaming world has entered into a war era. There are so many <a href="https://github.com/manuzhang/awesome-streaming">streaming solutions</a>, each of which has its own pros and cons. Need an apple-to-apple comparison ? <a href="https://databaseline.wordpress.com/2016/03/12/an-overview-of-apache-streaming-technologies/">An Overview of Apache Streaming Technologies</a> is for you.</p>
+</li>
+<li>
+<p>Although listed in the previous comparison, <a href="http://beam.incubator.apache.org/">Apache Beam</a> is not yet another streaming technology but</p>
+<blockquote>
+<p>provide the world with an easy-to-use, but powerful model for data-parallel processing, both streaming and batch, portable across a variety of runtime platforms</p>
+</blockquote>
+<p>It's formerly <a href="https://cloud.google.com/dataflow/">Google Cloud Dataflow SDK</a> and requires a runner (e.g. Google Cloud Dataflow, Flink, Spark) to work. <a href="https://cloud.google.com/blog/big-data/2016/05/why-apache-beam-a-google-perspective">Why Apache Beam? A Google Perspective</a> explains why (open sourcing) the project makes sense for Google, and from the business perspective too.</p>
+<blockquote>
+<p>That motivation hinges primarily on the desire to get as many Apache Beam pipelines as possible running on Cloud Dataflow.</p>
+</blockquote>
+</li>
+<li>
+<p>Beam has such nice feature as auto-scaling. <a href="http://www.infoq.com/presentations/google-cloud-dataflow">Streaming Auto-scaling in Google Cloud Dataflow</a> has more details.</p>
+</li>
+<li>
+<p>Apache Kafka has a data structure called purgatory, which <em>holds any request that hasn't yet met its criteria to succeed but also hasn't yet resulted in an error</em>. <a href="http://www.confluent.io/blog/apache-kafka-purgatory-hierarchical-timing-wheels">Apache Kafka, Purgatory, and Hierarchical Timing Wheels</a> talks about how Kafka efficiently keep track of tens of thousands of requests that are being asynchronously satisfied by other activity in the cluster. <a href="http://www.cs.columbia.edu/~nahum/w6998/papers/ton97-timing-wheels.pdf">Hierarchical Timing Wheels</a> is really a great data structure to know.</p>
+</li>
+<li>
+<p><a href="https://storm.apache.org/2016/05/06/storm101-released.html">Storm 1.0.1 is released</a> as a maintenance release that includes a number of important bug fixes that improve Storm's performance, stability and fault tolerance.</p>
+</li>
+</ul>
+<h3>Database</h3>
+<blockquote>
+<p>“Does the Database Community Have an Identity Crisis?’’</p>
+</blockquote>
+<ul>
+<li>The answer is yes, according to Peter Bailis. He looks at yesterday and today of database research and offers advice for tomorrow to <a href="http://www.bailis.org/blog/how-to-make-fossils-productive-again">make fossils productive again</a>.</li>
+</ul>
+<h3>Machine Learning</h3>
+<ul>
+<li><a href="http://googleresearch.blogspot.jp/2016/04/deepmind-moves-to-tensorflow.html">DeepMind moves to TensorFlow</a> after <a href="http://torch.ch/">Torch7</a> has served as their primary research platform for nearly four years.</li>
+</ul>
+<h3>Others</h3>
+<ul>
+<li>Julia Evans is bothered at work by that people who knows amazing things often get knowledge stuck in their head and others don't end up learning it. He looks into this in <a href="http://jvns.ca/blog/2016/04/30/building-expertise-at-work/">How does knowledge get locked up in people's heads?</a>. I've been a fan of sharing at work, and as he Julia says, being asked questions will make you an expert.</li>
+</ul>
+<p>Think about it. I'll leave you here.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

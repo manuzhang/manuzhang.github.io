@@ -1,0 +1,24 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Shade with SBT III</h1><p>2017-04-21<a class="home" href="../../">Home</a></p></div><p>In the last part of <a href="http://manuzhang.github.io/2016/11/12/shading-2.html">Shade with SBT II</a>,</p>
+<blockquote>
+<p>One one more thing is <code class='language-text'>java.lang.VerifyError</code> exceptions are thrown by JVM after the change. The work-around is adding <code class='language-text'>-noverify</code> in the JVM options. I haven't yet found the root cause and the issue is logged at <a href="https://issues.apache.org/jira/browse/GEARPUMP-236">GEARPUMP-236</a>.</p>
+</blockquote>
+<blockquote>
+<p>I have a feeling that there will be a third episode of our story with sbt shade.</p>
+</blockquote>
+<p>Now, here is the third episode. (The issue was resolved two months ago but my procrastination has been getting worse these days)</p>
+<p>My colleague <a href="https://github.com/karol-brejna-i">Karol</a> found that the <code class='language-text'>java.lang.VerifyError</code> went away when forcing usage of asm 5.1. Thanks to his thorough investigation, I can just post his <a href="https://issues.apache.org/jira/browse/GEARPUMP-236?focusedCommentId=15866352&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-15866352">findings</a> here.</p>
+<blockquote>
+<p>As stated here: <a href="https://github.com/sbt/sbt-assembly/issues/205#issuecomment-278287602">https://github.com/sbt/sbt-assembly/issues/205#issuecomment-278287602</a> there is probably a problem with shading.</p>
+<p>In our tests the plugin regenerated the classes that shouldn't be impacted by shading. Moreover, the outcome of the operation made the classes not validated by JVM.</p>
+<p>sbt-assembly we use (0.14.3) depends on jarjar(1.6.2)
+jarjar seems to be based on org.ow2.asm 5.0.4 (<a href="https://github.com/pantsbuild/jarjar/blob/master/lib/BUILD">https://github.com/pantsbuild/jarjar/blob/master/lib/BUILD</a>)</p>
+<p>It seems like the bug is related to asm lib.
+The experiments show that after upgrading asm to 5.1.x</p>
+</blockquote>
+<p>This was also <a href="https://github.com/sbt/sbt-assembly/issues/205#issuecomment-279967557">confirmed by another user of sbt-assembly</a> and fixed in <a href="https://github.com/sbt/sbt-assembly/releases/tag/v0.14.4">sbt-assembly 0.14.4</a>, and followed by asm upgrade in other downstream projects.</p>
+<ul>
+<li><a href="https://github.com/pantsbuild/jarjar/issues/26">Update ASM dependency pantsbuild/jarjar#26</a></li>
+<li><a href="https://github.com/apache/beam/issues/2014">BEAM-1492 Upgrade bytebuddy to 1.6.8 to jump past asm 5.0</a></li>
+</ul>
+<p>Ok, should this be the final episode ? I'm afraid not. Remember there is still an open question, <a href="http://stackoverflow.com/questions/40526420/sbt-published-maven-file-missing-artifacts-with-multiple-scopes">sbt published maven file missing artifacts with multiple scopes</a>.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

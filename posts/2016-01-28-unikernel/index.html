@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Unikernel </h1><p>2016-01-28<a class="home" href="../../">Home</a></p></div><p>The first time I learned about Unikernel was from <a href="https://ma.ttias.be/what-is-a-unikernel/">What is a ‘unikernel’?</a> when glancing through posts from Pocket Recommended on my shuttle bus the other day. It's totally out of curiosity and &quot;Recommended&quot; usually means a lot of people are watching it. After a quick read, I didn't get the point. Is it something <a href="http://roadtounikernels.myriabit.com/">Docker</a> ? I forgot about it as soon as I got off the shuttle bus.</p>
+<p>Then came the news that <a href="http://blog.docker.com/2016/01/unikernel/">Unikernel Systems Joins Docker</a>. Interesting ! Meanwhile, I was looking for materials for weekly internal sharing at work. Why didn't I share about Unikernels ? I went on to google and found a bunch of resources from <a href="https://en.wikipedia.org/wiki/Unikernel">Wikipedia</a>, <a href="https://wiki.xenproject.org/wiki/Unikernels">Xen Wiki</a> and <a href="http://unikernel.org/">unikernel.org</a>.</p>
+<h2>Why do we need Unikernel</h2>
+<p>At the age of cloud computing, programmers Tom and Jerry rent two Linux virtual machines (VMs) from <a href="https://aws.amazon.com/ec2">Amazon EC2</a> to host their web servers, and the two VMs end up on the same physical machine. The enabing technique is called virtualization.</p>
+<p><img src="https://ma.ttias.be/wp-content/uploads/2015/11/road_to_unikernels.png" alt="road_to_unikernels" /></p>
+<p>(Source: <a href="http://roadtounikernels.myriabit.com/">road to unikernels</a>)</p>
+<p>As in the above image, hardware resources are virtualized by a <a href="https://en.wikipedia.org/wiki/Hypervisor">hypervisor</a> and shared among multiple VMs. One of the most well known hypervisors, <a href="http://www.xenproject.org/">Xen</a> (used by EC2, Rackspace, etc), is developed by the <a href="https://en.wikipedia.org/wiki/University_of_Cambridge_Computer_Laboratory">University of Cambridge Computer Laboratory</a>, <strong>who conceived Unikernels</strong>.</p>
+<blockquote>
+<p>Despite this shift from applications running on multi-user operating
+systems to provisioning many instances of single-purpose
+VMs, there is little actual specialisation that occurs in the image
+that is deployed to the cloud. We take an extreme position on specialisation,
+treating the final VM image as a single-purpose appliance
+rather than a general-purpose system by stripping away functionality
+at compile-time</p>
+</blockquote>
+<p>(Source: <a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf">Unikernels: Library Operating Systems for the Cloud</a> )</p>
+<p>If Tom and Jerry only use the VMs to host their web servers, they probably don't need a general-purpose system for a desktop computer. With a single-purpose Unikernels system, Tom and Jerry could link only the system functionality required by their web servers.</p>
+<p>The benefits are</p>
+<ul>
+<li>improved security with reduced deployed codes and attack surface</li>
+<li>small footprints and fast boot time</li>
+<li>whole-system optimisation across device drivers and application logic</li>
+</ul>
+<h2>Now, what is a Unikernel</h2>
+<blockquote>
+<p>Unikernels are specialised, single-address-space machine images constructed by using library operating systems.</p>
+</blockquote>
+<p>(Source: <a href="https://en.wikipedia.org/wiki/Unikernel">Unikernel</a>)</p>
+<p>Unikernel is built on library operating system (libOS).</p>
+<h3>Library Operating System</h3>
+<p>In a library operating system,</p>
+<ul>
+<li>there is only a single address space</li>
+<li>device drivers are implemented as a set of libraries</li>
+<li>access control and isolation are enforced as policies in the application layer</li>
+</ul>
+<p>Without the separation of user space and kernel space, there is no need for repeated privilege transitions to move data between them. On the other hand, the single address space makes it difficult to isolate mulitple applications running side by side on a libOS.</p>
+<p>The drawback has been overcame by modern hypervisor which provides virtual machines with CPU time and strongly isolated virtual devices.</p>
+<p>Another drawback is protocol libraries (e.g. device drivers) have to been rewritten to replace that of a tradtional operating system.</p>
+<p>Fortunately, they have been implemented in <a href="https://mirage.io/">MirageOS</a>, the first prototype of a Unkernel.</p>
+<h3>MirageOS</h3>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Unikernel_mirage_example.png" alt="unikernel architecture" /></p>
+<p>The traditional software stacks are reduced to application code and mirage runtime. OS functionalities are imported as libraries provided by MirageOS. Every application is compiled into its own specialised OS.</p>
+<p>Users could target their codebase towards different platforms, Unix for test and Xen on x86 or Xen on ARM for deployement, which are run on the cloud or embedded systems.</p>
+<p>Besides MirageOS, there is an <a href="http://unikernel.org/projects/">expanding Unikernel ecosystem</a>.</p>
+<blockquote>
+<p>Some systems (like Rumprun) are language-agnostic, and provide a platform for any application code based on the requests it makes of the operating system... Unikernels can run in containers, on hypervisors, and on a wide array of bare-metal hardware.</p>
+</blockquote>
+<h2>Is Unikernel really needed</h2>
+<p>My colleagues are uncovinced. On the internal sharing, they don't think it's worthwhile to throw all the existing software stacks in the Linux ecosystem. Meanwhile, the benefits brought by Unikernel are doubtable. For example, tailored Linux systems could be also small. <a href="https://github.com/gliderlabs/docker-alpine">docker-alpine</a> image is only 5 MB.</p>
+<p>At the time of writing, another post popped up from Pocket Recommended, <a href="https://www.joyent.com/blog/unikernels-are-unfit-for-production">Unikernels are unfit for production
+</a>. The author questions the main reaons (performance, security, footprint) to adopt a Unikernel system. He thinks the most important reason that Unikernel is unfit for production is that <strong>Unikernels are entirely undebuggable</strong> (please read the original article for thorough explanations).</p>
+<h2>Summary</h2>
+<p>In this post, we get to know what Unikernel is and why it exists. It's unclear whether Unikernel will become a new revolution for cloud computing like Docker (I also list the discussions on Hacker News and Reddit in the reference below).</p>
+<h2>References</h2>
+<ol>
+<li><a href="http://queue.acm.org/detail.cfm?id=2566628">Unikernels: Rise of the Virtual Library Operating System</a> by Anil Madhavapeddy and David J. Scott.</li>
+<li><a href="https://speakerdeck.com/amirmc/unikernels">Unikernels at PolyConf 2015</a> by Amir Chaudhry.</li>
+<li><a href="https://news.ycombinator.com/item?id=10945219">Discussions on Hacker News</a></li>
+<li><a href="https://www.reddit.com/r/programming/comments/4206cv/unikernel_systems_joins_docker/">Discussions on Reddit</a></li>
+</ol>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

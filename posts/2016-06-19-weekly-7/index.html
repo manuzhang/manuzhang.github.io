@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Weekly Reading 0x7</h1><p>2016-06-19<a class="home" href="../../">Home</a></p></div><p>So long since last time that the &quot;Weekly Reading&quot; is almost becoming &quot;Monthly Reading&quot;. It is a (bad) sign that I haven't read much these days. One thing I've been up to is the upcoming <a href="http://www.meetup.com/Shanghai-Big-Data-Streaming-Meetup/events/231831396/">Shanghai BigData Streaming 3rd Meetup</a>. Let's chat on Big Data Streaming and European Cups over a cup of beer. Another is the <a href="https://github.com/apache/incubator-beam/pull/323">Gearpump Runner</a> for <a href="https://beam.apache.org">Apache Beam</a>. The reading list is also of good contents on Streaming and Apache Beam / Google Cloud Dataflow.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p>We firstly introduced <a href="https://beam.apache.org">Apache Beam</a> in <a href="http://manuzhang.github.io/2016/05/08/weekly-4.html">week 4</a> and then looked at <a href="https://cloud.google.com/blog/big-data/2016/05/why-apache-beam-a-google-perspective">Google's</a> and <a href="http://data-artisans.com/why-apache-beam/">dataArtisans's</a> perspectives. <a href="https://www.oreilly.com/ideas/future-proof-and-scale-proof-your-code">Future-proof and scale-proof your code</a> gives another two reasons to use Apache Beam.</p>
+<ul>
+<li>
+<p>Future-proofing</p>
+<blockquote>
+<p>Future-proofing code means that we’ll be able to run it on new technologies as they come out, without having to re-write the code.</p>
+</blockquote>
+</li>
+<li>
+<p>Scale-proofing</p>
+<blockquote>
+<p>As data grows, “scale-proofing” code means that we can start out with small data, and have an API that grows with us.</p>
+</blockquote>
+</li>
+</ul>
+<p>I think, with Apache Beam, it's cheap to try out another platform and carry out benchmarking. Plus, there will be no difference between writing codes run on single machine and cloud.</p>
+</li>
+<li>
+<p>This is how wordcount looks like with Beam API. Each <code class='language-text'>apply</code> function takes a <code class='language-text'>PTransform</code> parameter, like <code class='language-text'>ParDo</code> and <code class='language-text'>Count</code>.</p>
+<pre><code class="language-java">Pipeline p = Pipeline.create(options);
+p.apply(ParDo.named(&quot;ExtractWords&quot;).of(new DoFn&lt;String, String&gt;() {
+                    @Override
+                    public void processElement(ProcessContext c) {
+                      for (String word : c.element().split(&quot;[^a-zA-Z']+&quot;)) {
+                        if (!word.isEmpty()) {
+                          c.output(word);
+                        }
+                      }
+                    }
+                  }))
+ .apply(Count.&lt;String&gt;perElement())                 
+ .apply(TextIO.Write.to(&quot;gs://YOUR_OUTPUT_BUCKET/AND_OUTPUT_PREFIX&quot;));
+p.run();
+</code></pre>
+<p>Beam is inspired by <a href="http://research.google.com/pubs/pub35650.html">FlumeJava</a>   but it has replaced FlumeJava's methods on <code class='language-text'>PCollection</code> with the ubiquitous <code class='language-text'>PTransform</code>. <a href="http://beam.incubator.apache.org/blog/2016/05/27/where-is-my-pcollection-dot-map.html">Where's my <code class='language-text'>PCollection.map()</code>?</a> looks at the history and design decisions behind this.</p>
+</li>
+<li>
+<p>Besides Apache Beam, Google Cloud Dataflow offers two advanced features</p>
+<ul>
+<li><a href="https://cloud.google.com/blog/big-data/2016/03/comparing-cloud-dataflow-autoscaling-to-spark-and-hadoop">Autoscaling</a> dynamically adjusts the number of workers to the needs of pipeline. It is especially useful for streaming application where input data rate varies over time.</li>
+<li><a href="https://cloud.google.com/blog/big-data/2016/05/no-shard-left-behind-dynamic-work-rebalancing-in-google-cloud-dataflow">Liquid Sharding</a> addresses the problems of stragglers through asking busy workers to give away unprocessed work to free workers.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/akka/reactive-kafka">Reactive Kafka</a> is an <a href="http://doc.akka.io/docs/akka/2.4.6/scala/stream/index.html">Akka Streams</a> connector for <a href="https://kafka.apache.org">Apache Kafka</a>. Check out <a href="http://www.slideshare.net/jimriecken/reducing-microservice-complexity-with-kafka-and-reactive-streams">Reducing Microservice Complexity with Kafka and Reactive Streams</a> for examples.</p>
+</li>
+</ul>
+<h3>Scala</h3>
+<ul>
+<li><a href="http://www.lihaoyi.com/post/MicrooptimizingyourScalacode.html">Li Haoyi demonstrates how to micro-optimize your Scala code</a>, which is full of useful techniques.</li>
+</ul>
+<h3>Beyond</h3>
+<ul>
+<li>
+<p>How to solve hard programing problems ? Julia Evans comes up with <a href="http://jvns.ca/blog/2016/05/29/three-ways-to-solve-hard-programming-problems/">three ways</a>.</p>
+<ul>
+<li>Realize that there is awesome existing software that you can repurpose</li>
+<li>Steal an idea</li>
+<li>Come up with a new idea</li>
+</ul>
+</li>
+<li>
+<p><a href="http://boingboing.net/2016/06/15/intel-x86-processors-ship-with.html">Intel x86s hide another CPU that can take over your machine (you can't audit it)</a>. Take it with a grain of salt.</p>
+</li>
+</ul>
+<p>That's all for this week. See you in the meetup.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

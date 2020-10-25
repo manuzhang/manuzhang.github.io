@@ -1,0 +1,73 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Biweekly Reading 0x10</h1><p>2017-02-20<a class="home" href="../../">Home</a></p></div><p>It's 2017 and I'm still struggling with my procrastination. The <a href="http://manuzhang.github.io/2016/12/11/triweekly-15.html">last reading</a> was more than a month ago and articles have been piling up in my Pocket list. Not to overburden and scare off myself from this routine, I'd like to just do a biweekly reading to start again. Another reason is the value of news decay quickly as the value of data. I'll start with open source releases.</p>
+<h3>Releases</h3>
+<ul>
+<li>
+<p><a href="https://cloudplatform.googleblog.com/2017/02/introducing-Cloud-Spanner-a-global-database-service-for-mission-critical-applications.html">Google announced the public beta for Cloud Spanner: a global database service for mission-critical applications</a>. People have been discussing whether it beats the CAP theorem. Eric Brewer, the author of CAP and VP of Google Cloud <a href="https://cloudplatform.googleblog.com/2017/02/inside-Cloud-Spanner-and-the-CAP-Theorem.html">shared his idea</a>. Spanner is technically a CP system while providing more than five 9s of available in practice. It is achieved through Google's private network.</p>
+<blockquote>
+<p>Google controls the entire network and thus can ensure redundancy of hardware and paths, and can also control upgrades and operations in general.</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://flink.apache.org/news/2017/02/06/release-1.2.0.html">Apache Flink made 1.2.0 major release</a> with a bunch of new features</p>
+<ul>
+<li>supports changing the parallelism of a streaming job by restoring it from a savepoint with a different parallelism.</li>
+<li>redistribution of kafka partitions and offsets among consumers</li>
+<li>async I/O operator</li>
+<li>queryable state</li>
+<li>allows user to restart from a 1.1.4 savepoint</li>
+<li>enhanced Table API &amp; SQL (e.g. window aggregations over streaming tables)</li>
+</ul>
+</li>
+<li>
+<p><a href="http://storm.apache.org/2017/02/14/storm103-released.html">Apache Storm released 1.0.3</a> as a maintenance release, to be followed by 1.1.0 soon.</p>
+</li>
+<li>
+<p><a href="http://akka.io/news/2017/02/10/akka-2.4.17-released.html">Akka 2.4.17 released with security patch</a> for a potential security issue with Java deserialization.</p>
+</li>
+<li>
+<p><a href="https://databricks.com/blog/2017/02/09/intels-bigdl-databricks.html">Databricks blog gives highlights and tutorial</a> of Intel's recently released <a href="https://github.com/intel-analytics/BigDL">BigDL</a> project. BigDL will sit on the same level as Structured Streaming, MLLib and GraphX in the Spark Stack.</p>
+</li>
+<li>
+<p><a href="http://blog.cloudera.com/blog/2017/02/accelerating-apache-spark-mllib-with-intel-math-kernel-library-intel-mkl/">Intel and Cloudera have collaborated to speed up Spark’s ML algorithms, via integration with Intel’s Math Kernel Library</a>. Benchmark results show performance boost against JVM based execution and <a href="http://www.openblas.net/">OpenBLAS</a></p>
+</li>
+</ul>
+<h3>Conferences</h3>
+<ul>
+<li>
+<p><a href="https://code.facebook.com/posts/1692857177682119/machine-learning-scale-2017-recap">Recap of Machine Learning @Scale 2017</a> is posted on <a href="https://code.facebook.com/">Facebook Code blog</a>. For those not familiar with this conference like me</p>
+<blockquote>
+<p>Machine Learning @Scale is an invitation-only technical conference for data scientists, engineers and researchers working on large-scale applied machine learning solutions</p>
+</blockquote>
+</li>
+<li>
+<p><a href="https://databricks.com/blog/2017/02/09/spark-summit-east-2017-another-record-setting-spark-summit.html">Keynotes and highlights</a> from Databricks' speakers at <a href="https://spark-summit.org/east-2017/schedule/">Spark Summit East 2017</a> (with videos and slides) are available on their official blog. For users blocked from YouTube, check out <a href="https://pan.baidu.com/s/1jHD7yey">this link</a>.</p>
+</li>
+</ul>
+<h3>Industry</h3>
+<ul>
+<li>
+<p><a href="http://www.businesswire.com/news/home/20170201005431/en/Confluent-Grows-Subscriptions-700-Percent-2016-Businesses">Confluent Grows Subscriptions by Over 700 Percent in 2016 as Businesses Seize the Power of Real-Time Data</a>. Confluent Enterprise product is built around Apache Kafka™, including <a href="https://www.confluent.io/product/control-center/">Control Center</a> to manage Kafka at scale, <a href="https://www.confluent.io/product/connectors/">Kafka Connector API</a> to connect with other systems and <a href="https://www.confluent.io/product/kafka-streams/">Kafka Streams API</a> for lightweight stream processing. Kafka in Big Data is similar to pipe <code class='language-text'>|</code> in Unix.</p>
+</li>
+<li>
+<p><a href="http://hortonworks.com/press-releases/hortonworks-reports-record-2016-revenue-184-5-million-fourth-quarter-revenue-52-0-million/">Hortonworks reports record 2016 revenue of 184.5 million and 52.0 fourth quarter revenue</a>.</p>
+</li>
+<li>
+<p><a href="https://blog.evernote.com/blog/2017/02/08/evernote-reaches-the-cloud">Evernote migrates to Google Gloud Platform</a> with 5 billion notes and 5 billion attachments, or over 3 petabytes data.</p>
+</li>
+</ul>
+<h3>Programming</h3>
+<ul>
+<li>
+<p><a href="http://www.lihaoyi.com/post/WhatsFunctionalProgrammingAllAbout.html">What's Functional Programming All About?</a> Li haoyi gives his answer as</p>
+<blockquote>
+<p>The core of Functional Programming is thinking about data-flow rather than control-flow</p>
+</blockquote>
+<p>He has written a lot of worth-reading <a href="http://www.lihaoyi.com/">articles</a> as well as high-profile <a href="https://github.com/lihaoyi">tools</a>.</p>
+</li>
+</ul>
+<h3>Streaming</h3>
+<ul>
+<li>Stateful processing has been added to Apache Beam, the unified model of batch and streaming. <a href="https://beam.apache.org/blog/2017/02/13/stateful-processing.html">Here is a nice guide to walk you through the new feature</a>.</li>
+</ul>
+<p>That's all for the first reading in 2017.   I'd like to <strong>write more posts</strong> this year, and <strong>beyond weekly reading</strong>. Let's see if I can win the battle against procrastination.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

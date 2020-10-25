@@ -1,0 +1,59 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Gearpump Log &amp;#35;2</h1><p>2018-12-23<a class="home" href="../../">Home</a></p></div><p>Each pull request on Gearpump will be checked for <a href="https://codecov.io/gh/gearpump/gearpump">code coverage</a> thanks to <a href="https://github.com/scoverage/sbt-scoverage">sbt-scoverage</a> plugin. <code class='language-text'>sbt coverage test</code> had been added to <code class='language-text'>.travis.yml</code> to trigger the check.</p>
+<p>The coverage suddenly dropped to 0 when I <a href="https://github.com/gearpump/gearpump/pull/2106">upgraded Gearpump's Scala version to 2.12</a>. The <a href="https://github.com/gearpump/gearpump/commit/78bed0b457ce7e7c4cd57f5ad6502a880f5f66f4#diff-a84f91f20f040218bccd09fed4761fb3">suspicious change</a> was upgrading sbt-scoverage from <code class='language-text'>1.2.0</code> to <code class='language-text'>1.5.1</code>. I thought the problem was related to the sbt version <code class='language-text'>0.13.16</code> and <a href="https://github.com/scoverage/sbt-scoverage/issues/270">asked about it on sbt-scoverage's issues</a>. Meanwhile, I went on to try my luck with sbt <code class='language-text'>1.2.7</code> which turned a minor issue into significant work because all SBT plugins had to be upgraded to versions that work with SBT <code class='language-text'>1.x</code></p>
+<p>One roadblock was we'd maintained forked versions of <a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> and <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> from <code class='language-text'>0.13.x</code> and it looked very hard to port those changes.</p>
+<h3>Upgrading sbt-assembly</h3>
+<p>Gearpump uses sbt-assembly to create fat jars with shaded dependencies for sub-modules. Tinkering with sbt-assembly has contributed to my blog series <em>Shade with SBT <a href="https://manuzhang.github.io/2016/10/15/shading.html">I</a>, <a href="https://manuzhang.github.io/2016/11/12/shading-2.html">II</a> and <a href="https://manuzhang.github.io/2017/04/21/shading-3.html">III</a></em>. There was one more issue. <a href="https://issues.apache.org/jira/browse/GEARPUMP-162">Running gearpump examples in Intellij or SBT would fail</a> with <code class='language-text'>ClassNotFoundException</code> since they had <strong>provided</strong> dependency on <code class='language-text'>gearpump-core</code> and <code class='language-text'>gearpump-streaming</code>. My solution then was changing the scope to <strong>compile</strong> and <a href="https://github.com/apache/incubator-gearpump/pull/200/files#diff-7f7e51fd877cefd5501e7567e56a9858R180">manually filtering out everything other than examples' own source codes</a> with the built-in <code class='language-text'>assemblyExcludedJars</code> option. There was one limitation with the option that it only excluded jars. Hence, I went on to make a tweak <a href="https://github.com/manuzhang/sbt-assembly/commit/344e092171c3e6f29f73b73df58884b239573915#diff-c670e50888639e8441bc5754a62689dfR182">extending the exclusion to all files</a>.</p>
+<p>Apparently, it's not worth maintaining a tweak and porting it from one forked version to another. Therefore, I <a href="https://github.com/gearpump/gearpump/commit/f6497e9d470dc8fbc70edb44cc68db1bb54ccdc8#diff-a84f91f20f040218bccd09fed4761fb3R3">switched to the official sbt-assembly 0.14.9</a> and used the <code class='language-text'>assemblyMergeStrategy</code> option this time.</p>
+<pre><code class="language-scala">assemblyMergeStrategy in assembly := {
+x =&gt;
+  // core and streaming dependencies are not marked as provided
+  // such that the examples can be run with sbt or Intellij
+  // so they have to be excluded manually here
+  if (x.contains(&quot;examples&quot;)) {
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+  } else {
+    MergeStrategy.discard
+  }
+}
+</code></pre>
+<p>It's working! <a href="https://github.com/gearpump/gearpump/issues/2118">At least 50%</a>.</p>
+<p>This brought in another issue that <a href="https://github.com/gearpump/gearpump/issues/2120">the assembled jar were not published as before</a> with the following.</p>
+<pre><code class="language-text">addArtifact(Artifact(&quot;gearpump-core&quot;), sbtassembly.AssemblyKeys.assembly)
+</code></pre>
+<p>After taking a closer look, I found the previous way was fragile where the unassembled and assembled jars were created with the same name in different directories and the latter <strong>happened</strong> to override the former when publishing. The <a href="https://github.com/gearpump/gearpump/pull/2122/files">fix</a> was to append an <code class='language-text'>assembly</code> to the assembled jar and alter the artifact setting <a href="https://github.com/sbt/sbt-assembly#publishing-not-recommended">as documented</a>.</p>
+<pre><code class="language-scala">artifact in (Compile, assembly) := {
+  val art = (artifact in (Compile, assembly)).value
+  art.withClassifier(Some(&quot;assembly&quot;))
+}
+</code></pre>
+<p>By the way, it's not recommended to publish fat jars so I think this merits revisiting later.</p>
+<h3>Upgrading sbt-pack</h3>
+<p><code class='language-text'>sbt-pack</code> has served to create distributable Gearpump packages with launch scripts under <code class='language-text'>bin</code> and system jars (output from sbt-assembly) under <code class='language-text'>lib</code>. The <code class='language-text'>lib</code> directory is by default put on all classpaths in the launch scripts. Not to conflict with users' dependencies, Gearpump tried to put system dependencies under subdirectories of <code class='language-text'>lib</code>. My colleague Vincent <a href="https://github.com/huafengw/sbt-pack/commit/88fd39e01a263e142c8668124beb88018b58ef69">hacked into the packLibDir option</a> and made the following possible.</p>
+<pre><code class="language-text">packLibDir := Map(	      
+  &quot;lib/hadoop&quot; -&gt; new ProjectsToPack(gearpumpHadoop.id).
+      exclude(services.id, core.id),
+  &quot;lib/services&quot; -&gt; new ProjectsToPack(services.id).exclude(core.id)
+)
+</code></pre>
+<p>Like sbt-assembly, I decided not to maintain the forked sbt-pack given the cost of porting. <a href="https://github.com/gearpump/gearpump/commit/d2655ed5b2629ae7bb31f19caf595c2b46683588">The solution was to pack system dependencies into other directories</a> on the same level as <code class='language-text'>lib</code> and I was able to upgrade sbt-pack to 0.11.</p>
+<h3>Other changes</h3>
+<ul>
+<li>
+<p><a href="https://github.com/gearpump/gearpump/commit/801101732e315a63ba02af9d926f83df65cf5fb0">sbt-unidoc has been upgraded to 0.4.2</a> with <a href="https://github.com/gearpump/gearpump/issues/2117">unresolved Javadoc errors</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/gearpump/gearpump/commit/801101732e315a63ba02af9d926f83df65cf5fb0">License headers have been updated removing ASF declarations</a> with the help of <a href="https://www.jetbrains.com/help/idea/copyright.html">Intellij's updating copyright text button</a>.</p>
+</li>
+<li>
+<p>Build scripts have been moved from classes extending <code class='language-text'>sbt.Build</code> in various <code class='language-text'>.scala</code> files to <code class='language-text'>build.sbt</code>.</p>
+</li>
+</ul>
+<h3>Is the coverage issue solved ?</h3>
+<p>No! Unfortunately the coverage issue was not solved even when <a href="https://github.com/gearpump/gearpump/commit/331f6e0f76dce8145a9fef286e82ef210861375b">SBT had been upgraded 1.2.7</a>. It's turned out that SBT version is not the scapegoat but that I have not read sbt-scoverage's README carefully enough. <code class='language-text'>sbt coverage</code> only outputs the coverage data and <code class='language-text'>sbt coverageReport</code> is needed to generate the report.</p>
+<pre><code class="language-text">sbt coverage test
+sbt coverageReport
+</code></pre>
+<p>Note that <code class='language-text'>coverageReport</code> can't be put in the same command as <code class='language-text'>coverage</code>.</p>
+<p>It has left me thinking whether my fight with SBT is worthwhile.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

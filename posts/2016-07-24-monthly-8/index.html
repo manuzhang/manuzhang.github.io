@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Monthly Reading 0x8</h1><p>2016-07-24<a class="home" href="../../">Home</a></p></div><p>Okay, the <em>Weekly Reading</em> has finally embarrassingly turned into <em>Monthly Reading</em>. I leave the id auto-incremented to <em>0x8</em>.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p>We introduced Kafka Streams about <a href="http://manuzhang.github.io/2016/05/29/weekly-6.html">2 months ago</a> but haven't talked about <a href="https://softwaremill.com/kafka-streams-how-does-it-fit-stream-landscape/">how does it fit the stream processing landscape?</a>. My two cents is that you get full functionality of stream processing without adding/maintaining another system if Kafka is already used. It makes much sense since the premise holds in many cases. What's different on Kafka Streams ? Michael Noll from <a href="http://www.confluent.io/">Confluent</a> wrote a series about its unique features.</p>
+<ul>
+<li><a href="http://www.confluent.io/blog/elastic-scaling-in-kafka-streams">Elastic Scaling in Kafka Streams</a></li>
+<li><a href="http://www.confluent.io/blog/secure-stream-processing-with-kafka-streams">Secure Streaming Processing with Kafka Streams</a></li>
+</ul>
+</li>
+<li>
+<p>SQL on streaming has divided into two worlds. One is <a href="https://databricks.com/blog/2016/05/11/apache-spark-2-0-technical-preview-easier-faster-and-smarter.html">Spark SQL over Structured Streaming</a>. The other is <a href="http://www.slideshare.net/julianhyde/streaming-sql">StreamingSQL</a> from <a href="https://calcite.apache.org/">Apache Calcite</a>, which is being integrated by Storm, Flink and Samza for their SQL layers.</p>
+</li>
+<li>
+<p>Another buzzword is IoT Analytics (with streaming). Storm PMC Taylor Goetz shared about this topic in <a href="https://speakerdeck.com/ptgoetz/beyond-the-tweeting-toaster-iot-analytics-with-apache-storm-kafka-and-arduino">Beyond the Tweeting Toaster: IoT Analytics with Apache Storm, Kafka and Arduino</a>. This is, however, one-way flow of <code class='language-text'>sensor -&gt; connector -&gt; kafka -&gt; storm</code>.</p>
+</li>
+<li>
+<p>Spotify runs its services on Google Compute Engine and adopts Google Cloud Dataflow for data processing work. They've implemented a <a href="https://github.com/spotify/scio">Scala DSL</a> on top of Dataflow SDK which is now <a href="https://issues.apache.org/jira/browse/BEAM-302">being moved into Apache Beam</a>. Check it out at <a href="https://www.infoq.com/presentations/spotify-streaming-cloud">Handling Streaming Data in Spotify Using the Cloud</a>.</p>
+</li>
+</ul>
+<h3>Machine Learning</h3>
+<ul>
+<li>Edo Liberty, head of Yahoo's Independent Research in New York, <a href="https://www.infoq.com/presentations/data-mining-machine-learning">introduced basic concepts in online machine learning</a> and Yahoo's <a href="http://datasketches.github.io/">DataSketches library</a>.</li>
+</ul>
+<h3>Distributed Systems</h3>
+<ul>
+<li>
+<p>Aysylu Greenberg discussed <a href="https://www.infoq.com/presentations/distributed-systems-patterns">patterns in distributed systems</a> from systems she has worked at Google.</p>
+<ul>
+<li>Robust &amp; scaleable pipelines</li>
+<li>Leases for sharing &amp; heartbeat</li>
+<li>Trade off inaccuracy for
+resilience &amp; performance</li>
+</ul>
+</li>
+</ul>
+<h3>Apache Spark</h3>
+<ul>
+<li>
+<p><a href="https://databricks.com/blog/2016/06/22/apache-spark-key-terms-explained.html">Apache Spark Key Terms Explained</a> covers all the major concepts in Spark from APIs to components.</p>
+</li>
+<li>
+<p>Speaking of API, have you ever wondered what the relationship is between Spark's three APIs: RDD, DataFrame and Dataset? Now here is <a href="https://databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html">A Tale of Three Apache Spark APIs: RDDs, DataFrames, and Datasets</a>.</p>
+</li>
+<li>
+<p>Spark Summit 2016 took place from June 6 to June 8 in San Francisco. In <a href="http://datascienceassn.org/content/spark-summit-2016-review">Spark Summit 2016 Review</a> Michael Malak said</p>
+<blockquote>
+<p>Spark might have been overhyped during the 1.x days, but with Spark 2.0 it's caught up to the hype generated during the 1.0 days.</p>
+</blockquote>
+</li>
+</ul>
+<h3>Scala &amp; Java</h3>
+<ul>
+<li>
+<p>If you've been puzzled by Scala compiler errors and don't know what to do next, <a href="https://scala-clippy.org/">Scala Clippy</a>, which adds helpful messages, might be the right compiler plugin for you.</p>
+</li>
+<li>
+<p><a href="http://blog.takipi.com/stackoverflow-7-of-the-best-java-answers-that-you-havent-seen/">Stackoverflow: 7 of the Best Java Answers That You Haven’t Seen</a> is a summary by Takipi on most interesting Java Q&amp;A on Stackoverflow.</p>
+</li>
+</ul>
+<h3>Others</h3>
+<ul>
+<li>
+<p>Stackoverflow has an 34 min outage on July 20. From the official <a href="http://stackstatus.net/post/147710624694/outage-postmortem-july-20-2016">Outage Postmortem</a>,</p>
+<blockquote>
+<p>The direct cause was a malformed post that caused one of our regular expressions to consume high CPU on our web servers.</p>
+</blockquote>
+</li>
+<li>
+<p>Nathan Marz questioned the practice of recruiting in <a href="http://nathanmarz.com/blog/the-limited-value-of-a-computer-science-education.html">The limited value of a computer science education</a>.</p>
+<blockquote>
+<p>Whether someone can or cannot solve some cute algorithm problem in a high-pressure situation tells you nothing about that person's ability to write solid, clean, well-structured programs in normal working conditions.</p>
+</blockquote>
+<p>He said take-home projects is a better alternative. Yes, I agree and I asked the interviewers to give a brief presentation on one of <a href="https://github.com/onurakpolat/awesome-bigdata">awesome-bigdata</a> lists last time.</p>
+</li>
+</ul>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

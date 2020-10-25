@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Weekly Reading 0x5</h1><p>2016-05-15<a class="home" href="../../">Home</a></p></div><p>The first Kafka Summit conference took place on April 26, 2016. <a href="http://www.confluent.io/blog/log-compaction-kafka-summit-edition-may-2016">Confluent blogs summarized the highlights</a>. Here are the talks I like most</p>
+<ul>
+<li><a href="http://www.slideshare.net/helenaedelson/leveraging-kafka-for-big-data-in-real-time-bidding-analytics-ml-campaign-management-for-globally-distributed-data-flows">Leveraging Kafka for Big Data in Real Time Bidding, Analytics, ML &amp; Campaign Management for Globally Distributed Data Flows</a> by Helena Edelson.</li>
+<li><a href="http://www.slideshare.net/julianhyde/streaming-sql-61426712">Streaming SQL</a> by Julian Hyde.</li>
+<li><a href="http://www.slideshare.net/ConfluentInc/securing-kafka">Securing Kafka</a> by Jun Rao.</li>
+<li><a href="http://www.slideshare.net/ConfluentInc/introducing-kafka-streams-largescale-stream-processing-with-kafka-neha-narkhede">Introducing Kafka Streams: Large-scale Stream Processing with Kafka</a> by Neha Narkhede.</li>
+</ul>
+<p>Now let's start our reading.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p>Last week, we saw <a href="https://cloud.google.com/blog/big-data/2016/05/why-apache-beam-a-google-perspective">Why Apache Beam? A Google Perspective</a>. This week let's look at <a href="http://data-artisans.com/why-apache-beam/">data Artisans perspective on their involvement in Apache Beam</a>.</p>
+</li>
+<li>
+<p>In <a href="http://manuzhang.github.io/2016/03/15/spark-summit.html">Streaming at Spark Summit East 2016</a>, we talked about the upcoming Structured Streaming API in Spark 2.0.  Now <a href="https://databricks.com/blog/2016/05/11/spark-2-0-technical-preview-easier-faster-and-smarter.html">Spark 2.0 Technical Preview</a> is available. They find a number of problems in adopting a single programming model integrating both batch and streaming data and</p>
+<blockquote>
+<p>The vision of Structured Streaming is to utilize the Catalyst optimizer to discover when it is possible to transparently turn a static program into an incremental execution that works on dynamic, infinite data (aka a stream).</p>
+</blockquote>
+</li>
+</ul>
+<h3>Scala</h3>
+<ul>
+<li>
+<p>Li Haoyi explores how to make use of the type-safety of Scala to catch mistakes at compile time in <a href="http://www.lihaoyi.com/post/StrategicScalaStylePracticalTypeSafety.html">Strategic Scala Style: Practical Type Safety</a>. His previous posts in the series are highly recommended</p>
+<ul>
+<li><a href="http://www.lihaoyi.com/post/StrategicScalaStyleConcisenessNames.html">Strategic Scala Style: Conciseness &amp; Names
+</a></li>
+<li><a href="http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html">Strategic Scala Style: Principle of Least Power
+</a></li>
+</ul>
+</li>
+<li>
+<p>Daniel Westheide introduces his observation that</p>
+<blockquote>
+<p>People are using Option too often where their business logic clearly indicates they should use their own, custom ADT.</p>
+</blockquote>
+<p>in <a href="http://danielwestheide.com/blog/2016/04/26/when-option-is-not-good-enough.html">When Option Is Not Good Enough
+</a>.</p>
+</li>
+</ul>
+<h3>Machine Learning</h3>
+<ul>
+<li>Google <a href="http://googleresearch.blogspot.jp/2016/05/announcing-syntaxnet-worlds-most.html">announced SyntaxNet, open sourcing the world’s most accurate parser</a>. SyntaxNet is an open-source neural network framework implemented in TensorFlow that provides a foundation for Natural Language Understanding (NLU) systems.</li>
+</ul>
+<h3>One more thing</h3>
+<p>I also read about two nice articles on non-volatile memory this week</p>
+<ul>
+<li><a href="https://blog.acolyer.org/2016/05/06/nova-a-log-structured-file-system-for-hybrid-volatilenon-volatile-main-memories/">NOVA: A Log-Structured File System for Hybrid Volatile/Non-Volatile Main Memories</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=2874238">Non-volatile Storage</a> from ACM Queue.</li>
+</ul>
+<p>but I don't think I understand them well enough. Hence I'd like to defer them to a dedicated post. See you there.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

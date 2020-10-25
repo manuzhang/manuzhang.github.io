@@ -1,0 +1,80 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Weekly Reading 0x3</h1><p>2016-04-30<a class="home" href="../../">Home</a></p></div><p>Some while ago I read from <a href="http://db.cs.berkeley.edu/jmh/bio.html">Joe Hellerstein</a> introducing great work from his two former students, <a href="https://databeta.wordpress.com/2016/02/01/the-professors-peter-a-and-b/">The Professors Peter, A and B</a>. This week we have some good stuff from both Peter, A and B.</p>
+<p>In this <a href="http://www.infoq.com/interviews/alvaro-distributed-programming">interview with Peter Alvaro on distributed computing</a>, he shared about why distributed programming is hard.</p>
+<blockquote>
+<p>distributed systems are fundamentally hard, as we have always known because of the presence and interaction of two different forms of uncertainty.</p>
+</blockquote>
+<p>The two forms of uncertainty are</p>
+<ol>
+<li>asynchrony, which is uncertainty about the ordering and the timing at which messages will be delivered to different nodes.</li>
+<li>partial failure, which means that some of your compute components may fail to run, while others keep running and your program nevertheless gives an outcome, which may be incomplete or incorrect.</li>
+</ol>
+<p>On the other side, Peter Bailis <a href="http://www.bailis.org/blog/you-can-do-research-too/">encouraged everyone to get started in research</a> and gave an example of <em>no one is born a researcher</em></p>
+<blockquote>
+<p>One of my closest colleagues started off doing technical support during the first dot-com boom with only an undergraduate degree in literature and no background in Computer Science. Today, my colleague is a tenure-track professor doing work I deeply respect and admire.</p>
+</blockquote>
+<p>Guess who is that colleague ? Peter A !!!</p>
+<p><a href="http://www.bailis.org/blog/">Peter B's blog</a> is the best place to know why distributed programming is hard.</p>
+<p>This is the end. I mean, the end of beginning.</p>
+<h3>Streaming</h3>
+<ul>
+<li>
+<p><a href="https://www.mapr.com/blog/real-time-event-streaming-what-are-your-options">Real-Time Event Streaming: What Are Your Options?</a> interestingly decompose a typical streaming architecture into three major components</p>
+<ol>
+<li><strong>Producers</strong> publish event data into a streaming system after collecting it from the data source, transforming it into the desired format, and optionally filtering, aggregating, and enriching it. (e.g. Apache Flume, Streamsets Data Collector)</li>
+<li><strong>Streaming system</strong> takes the data published by the producers, persists it, and reliably delivers it to consumers. (e.g. Apache Kafka, MapR Streams)</li>
+<li><strong>Consumers</strong> are typically stream processing engines that subscribe to data from streams and manipulate or analyze that data to look for alerts and insights. (e.g. Spark Streaming, Apache Storm, Apache Flink, Apache Apex)</li>
+</ol>
+</li>
+</ul>
+<h3>Machine Learning</h3>
+<ul>
+<li>Learned <a href="http://machinelearningmastery.com/boosting-and-adaboost-for-machine-learning/">Boosting and AdaBoost for Machine Learning</a> from Machine Learning Mastery this week.</li>
+</ul>
+<h3>JVM / GC</h3>
+<ul>
+<li>
+<p>Julia Evans firstly shared his recent experience in <a href="http://jvns.ca/blog/2016/04/22/java-garbage-collection-can-be-really-slow/">Java garbage collection can be really know</a> and then gave <a href="http://jvns.ca/blog/2016/04/23/some-links-on-java-garbage-collection/">some helpful links on Java garbage collection</a></p>
+</li>
+<li>
+<p>Daniel Spiewak <a href="https://gist.github.com/djspiewak/7a81a395c461fd3a09a6941d4cd040f2">explains Miles Sabin's magic</a> in fixing <a href="https://issues.scala-lang.org/browse/SI-2712">SI-2172</a>.</p>
+<pre><code class="language-scala">def foo[F[_], A](fa: F[A]): String = fa.toString
+
+type IntConsumer[A] = Int =&gt; A
+
+val f: IntConsumer[Int] = { x: Int =&gt; x * 2 }
+foo(f)           // nope!         
+</code></pre>
+<p>The above should compile now in Scala 2.12.</p>
+</li>
+<li>
+<p><a href="http://mishadoff.com/blog/clojure-design-patterns/">Clojure Design Patterns</a> from the conversation of two modest programmers Pedro Veel and Eve Dopler, who are solving common software engineering problems and applying design patterns.</p>
+</li>
+</ul>
+<h3>Container</h3>
+<ul>
+<li>Docker <a href="https://blog.docker.com/2016/03/docker-networking-design-philosophy/">explains the guiding principles behind its networking design</a> which allows for separation for two difference users, application developer and network IT.</li>
+</ul>
+<h3>Papers</h3>
+<ul>
+<li>
+<p>The morning paper focused on <a href="http://eurosys16.doc.ic.ac.uk/">EuroSys 2016</a> this week, where we get to know the cost and performance implications of non-volatile memory in <a href="https://blog.acolyer.org/2016/04/28/data-tiering-in-heterogeneous-memory-systems/">Data Tiering in Heterogeneous Memory Systems</a>.</p>
+</li>
+<li>
+<p>Syslog also has a <a href="http://www.syslog.cl.cam.ac.uk/2016/04/23/eurosys-2016/">highlight</a> of EuroSys 2016.</p>
+</li>
+</ul>
+<h3>News / History</h3>
+<ul>
+<li>
+<p><a href="http://www.acm.org/awards/2015-technical-awards">ACM RECOGNIZES MAJOR TECHNICAL CONTRIBUTIONS THAT HAVE ADVANCED THE COMPUTING FIELD</a>.</p>
+<p>The 2015 winners,</p>
+<ul>
+<li><strong>Richard Stallman</strong>, for the development and leadership of GCC (GNU Compiler Collection), which has enabled extensive software and hardware innovation, and has been a lynchpin of the free software movement</li>
+<li><strong>Brent Waters</strong>, for the introduction and development of the concepts of attribute-based encryption and functional encryption</li>
+<li><strong>Michael Luby</strong>, for groundbreaking contributions to erasure correcting codes, which are essential for improving the quality of video transmission over the Internet.</li>
+<li><strong>Eric Horvitz</strong>, for contributions to artificial intelligence and human-computer interaction spanning the computing and decision sciences through developing principles and models of sensing, reflection, and rational action.</li>
+</ul>
+</li>
+</ul>
+<p>Now the real end, and end of April.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>

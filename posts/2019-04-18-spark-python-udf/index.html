@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Static Blog generated in Scala" /><title>ManuZhang's Blog</title><link rel="shortcut icon" href="favicon.png" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" /><link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" /><link rel="stylesheet" href="../../themes/styles.css" /><link rel="stylesheet" href="../../themes/prism.css" /><script src="../../themes/prism.js"></script></head><body><div id="layout" class="pure-g"><div class="sidebar pure-u-1 pure-u-md-1-4"><div class="header"><h1 class="brand-title">ManuZhang's Blog</h1><h2 class="brand-tagline">Static Blog generated in Scala</h2><nav class="nav"><ul class="nav-list"><li class="nav-item"><a class="pure-button" href="https://github.com/manuzhang">GitHub</a></li><li class="nav-item"><a class="pure-button" href="https://twitter.com/manuzhang">Twitter</a></li><li class="nav-item"><a class="pure-button" href="rss/index.xml">RSS</a></li></ul></nav></div></div><div class="content pure-u-1 pure-u-md-3-4"><div><div><h1>Note about Spark Python UDF </h1><p>2019-04-18<a class="home" href="../../">Home</a></p></div><p>The other day, my colleague was developing a PySpark(2.3.1) application which reads Chinese sentences from a Hive table, tokenizes them with a Python UDF and saves the first words into another table. The codes are roughly like this.</p>
+<pre><code class="language-python">def tokenize(sentence):
+    return tokenizer.tokenize(sentence)[0]
+
+df = spark.sql(&quot;select sentence from db.article&quot;)
+df = df.repartition(1000)
+
+tokenize_udf = udf(tokenize, StringType())
+df = df.withColumn('word', tokenize_udf('sentence'))
+df.filter(df.word != '')
+
+df.write.format('orc').mode('overwrite').saveAsTable('db.words')        
+</code></pre>
+<p>The Python UDF was time-consuming so my colleague tried increasing parallelism with <code class='language-text'>repartition</code> from 99 to 1000. It didn't work as expected and the job still stuck in those 99 tasks.</p>
+<p>I looked into the physical plan and it turned out that the Python UDF (<code class='language-text'>BatchEvalPython</code>) had been executed twice, once in a push down filter before repartition and once after repartition.</p>
+<pre><code class="language-text">== Physical Plan ==
+Execute CreateDataSourceTableAsSelectCommand CreateDataSourceTableAsSelectCommand `db`.`words`, Overwrite, [word#19]
++- *(3) Project [sentence#13, pythonUDF0#26 AS word#19]
+   +- BatchEvalPython [tokenize(sentence#13)], [sentence#13, pythonUDF0#26]
+      +- Exchange RoundRobinPartitioning(1000)
+         +- *(2) Project [sentence#13]
+            +- *(2) Filter NOT (pythonUDF0#25 = )
+               +- BatchEvalPython [tokenize(sentence#13)], [sentence#13, pythonUDF0#25]
+                  +- *(1) Filter (isnotnull(sentence#13) &amp;&amp; NOT (sentence#13 = ))
+                     +- HiveTableScan [sentence#13], HiveTableRelation `db`.`sentence`, org.apache.hadoop.hive.ql.io.orc.OrcSerde, [sentence#13]
+</code></pre>
+<p>I found <a href="https://issues.apache.org/jira/browse/SPARK-22541">another issue when Python UDF is used in filter</a> which led me to <a href="https://github.com/apache/spark/blob/v2.3.1/python/pyspark/sql/functions.py#L2113">an important note about Python UDF</a></p>
+<pre><code class="language-python">def udf(f=None, returnType=StringType()):
+    &quot;&quot;&quot;Creates a user defined function (UDF).
+    .. note:: The user-defined functions are considered deterministic by default. Due to
+        optimization, duplicate invocations may be eliminated or the function may even be invoked
+        more times than it is present in the query. If your function is not deterministic, call
+        `asNondeterministic` on the user defined function. E.g.:
+</code></pre>
+<p>Hence, it's possible <strong>Python UDF is invoked more times than it is present in the query</strong>. There are more notes you should check out when your Spark application with Python UDF behaves strangely next time.</p>
+<h3>Solution</h3>
+<p>To increase parallelism of executing Python UDF, we can decrease the input split size as follows.</p>
+<pre><code class="language-text">spark.sparkContext._jsc.hadoopConfiguration().set(&quot;mapred.max.split.size&quot;, &quot;33554432&quot;)
+</code></pre>
+<p>Thanks to this StackOverflow answer on <a href="https://stackoverflow.com/questions/28844631/how-to-set-hadoop-configuration-values-from-pyspark">How to set Hadoop configuration values from PySpark</a>.</p>
+</div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>
