@@ -37,62 +37,67 @@ println(RuleExecutor.dumpTimeSpent())
 <li>Don't create a new <code class='language-text'>DataFrame</code> for each transform on <code class='language-text'>Column</code>. Create one at last with <code class='language-text'>DataFrame#select</code></li>
 </ol>
 <h3>Appendix</h3>
-<p>Rule | Nano Time
----- | ---------
-org.apache.spark.sql.catalyst.analysis.Analyzer$FixNullability	|	489262230
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGroupingAnalytics	|	243030776
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$PropagateTypes	|	143141555
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveDeserializer	|	97690381
-org.apache.spark.sql.catalyst.analysis.ResolveCreateNamedStruct	|	87845664
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowFrame	|	85098172
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowOrder	|	83967566
-org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractWindowExpressions	|	63928074
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveReferences	|	56549170
-org.apache.spark.sql.catalyst.analysis.Analyzer$LookupFunctions	|	52411767
-org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractGenerator	|	24759815
-org.apache.spark.sql.catalyst.analysis.ResolveTimeZone	|	24078761
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolvePivot	|	23264984
-org.apache.spark.sql.catalyst.analysis.ResolveInlineTables	|	22864548
-org.apache.spark.sql.execution.datasources.FindDataSourceTable	|	22127481
-org.apache.spark.sql.catalyst.analysis.DecimalPrecision	|	20855512
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$ImplicitTypeCasts	|	19908820
-org.apache.spark.sql.catalyst.analysis.TimeWindowing	|	17289560
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$DateTimeOperations	|	16691649
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$FunctionArgumentConversion	|	16645812
-org.apache.spark.sql.catalyst.analysis.ResolveHints$ResolveBroadcastHints	|	16391773
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveFunctions	|	16094905
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$InConversion	|	15937875
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$PromoteStrings	|	15659420
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$IfCoercion	|	15131194
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$BooleanEquality	|	15120505
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$Division	|	14657587
-org.apache.spark.sql.execution.datasources.PreprocessTableCreation	|	12421808
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveSubquery	|	12330915
-org.apache.spark.sql.catalyst.analysis.UpdateOuterReferences	|	11919954
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$CaseWhenCoercion	|	11807169
-org.apache.spark.sql.catalyst.analysis.EliminateUnions	|	11761260
-org.apache.spark.sql.catalyst.analysis.SubstituteUnresolvedOrdinals	|	11683297
-org.apache.spark.sql.catalyst.analysis.ResolveHints$RemoveAllHints	|	11363987
-org.apache.spark.sql.execution.datasources.DataSourceAnalysis	|	11253060
-org.apache.spark.sql.catalyst.analysis.Analyzer$HandleNullInputsForUDF	|	11075682
-org.apache.spark.sql.execution.datasources.PreprocessTableInsertion	|	11061610
-org.apache.spark.sql.catalyst.analysis.Analyzer$GlobalAggregates	|	10708386
-org.apache.spark.sql.catalyst.analysis.CleanupAliases	|	9447785
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAliases	|	4725210
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNewInstance	|	3634067
-org.apache.spark.sql.catalyst.analysis.Analyzer$CTESubstitution	|	2359406
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveOrdinalInOrderByAndGroupBy	|	2191643
-org.apache.spark.sql.catalyst.analysis.ResolveTableValuedFunctions	|	2160003
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveRelations	|	2095181
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggregateFunctions	|	2029468
-org.apache.spark.sql.catalyst.analysis.TypeCoercion$WidenSetOperationTypes	|	1999994
-org.apache.spark.sql.execution.datasources.ResolveSQLOnFile	|	1891759
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveMissingReferences	|	1864083
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNaturalAndUsingJoin	|	1856631
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggAliasInGroupBy	|	1740242
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGenerate	|	1714332
-org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveUpCast	|	1686660
-org.apache.spark.sql.catalyst.analysis.Analyzer$PullOutNondeterministic	|	1602061
-org.apache.spark.sql.catalyst.analysis.Analyzer$WindowsSubstitution	|	1406648
-org.apache.spark.sql.catalyst.analysis.AliasViewChild	|	1184166</p>
+<table>
+<thead>
+<tr><th>Rule</th><th>Nano Time</th></tr>
+</thead>
+<tbody>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$FixNullability</td><td>489262230</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGroupingAnalytics</td><td>243030776</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$PropagateTypes</td><td>143141555</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveDeserializer</td><td>97690381</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveCreateNamedStruct</td><td>87845664</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowFrame</td><td>85098172</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveWindowOrder</td><td>83967566</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractWindowExpressions</td><td>63928074</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveReferences</td><td>56549170</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$LookupFunctions</td><td>52411767</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ExtractGenerator</td><td>24759815</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveTimeZone</td><td>24078761</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolvePivot</td><td>23264984</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveInlineTables</td><td>22864548</td></tr>
+<tr><td>org.apache.spark.sql.execution.datasources.FindDataSourceTable</td><td>22127481</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.DecimalPrecision</td><td>20855512</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$ImplicitTypeCasts</td><td>19908820</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TimeWindowing</td><td>17289560</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$DateTimeOperations</td><td>16691649</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$FunctionArgumentConversion</td><td>16645812</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveHints$ResolveBroadcastHints</td><td>16391773</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveFunctions</td><td>16094905</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$InConversion</td><td>15937875</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$PromoteStrings</td><td>15659420</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$IfCoercion</td><td>15131194</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$BooleanEquality</td><td>15120505</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$Division</td><td>14657587</td></tr>
+<tr><td>org.apache.spark.sql.execution.datasources.PreprocessTableCreation</td><td>12421808</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveSubquery</td><td>12330915</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.UpdateOuterReferences</td><td>11919954</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$CaseWhenCoercion</td><td>11807169</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.EliminateUnions</td><td>11761260</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.SubstituteUnresolvedOrdinals</td><td>11683297</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveHints$RemoveAllHints</td><td>11363987</td></tr>
+<tr><td>org.apache.spark.sql.execution.datasources.DataSourceAnalysis</td><td>11253060</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$HandleNullInputsForUDF</td><td>11075682</td></tr>
+<tr><td>org.apache.spark.sql.execution.datasources.PreprocessTableInsertion</td><td>11061610</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$GlobalAggregates</td><td>10708386</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.CleanupAliases</td><td>9447785</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAliases</td><td>4725210</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNewInstance</td><td>3634067</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$CTESubstitution</td><td>2359406</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveOrdinalInOrderByAndGroupBy</td><td>2191643</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.ResolveTableValuedFunctions</td><td>2160003</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveRelations</td><td>2095181</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggregateFunctions</td><td>2029468</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.TypeCoercion$WidenSetOperationTypes</td><td>1999994</td></tr>
+<tr><td>org.apache.spark.sql.execution.datasources.ResolveSQLOnFile</td><td>1891759</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveMissingReferences</td><td>1864083</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveNaturalAndUsingJoin</td><td>1856631</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveAggAliasInGroupBy</td><td>1740242</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveGenerate</td><td>1714332</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$ResolveUpCast</td><td>1686660</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$PullOutNondeterministic</td><td>1602061</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.Analyzer$WindowsSubstitution</td><td>1406648</td></tr>
+<tr><td>org.apache.spark.sql.catalyst.analysis.AliasViewChild</td><td>1184166</td></tr>
+</tbody>
+</table>
 </div><div class="footer pure-u-1"><span>Generated with <a href="https://github.com/manuzhang/sbg">SBG.</a> Written in Scala</span></div></div></div></body></html>
