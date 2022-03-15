@@ -9,8 +9,8 @@ LIMIT 10;
 <p><code class='language-text'>t</code> is a bucket table, with 10000 buckets, bucket column <code class='language-text'>i</code> and sort column <code class='language-text'>j</code>, and each bucket file is around 3 GB.</p>
 <h3>Diagnostics</h3>
 <p>Firstly, looking from the application UI, the query was executed quite differently. In 2.3.1, the result was returned early after 1 task reading 487.7 MB data, which is an expected behavior for <code class='language-text'>LIMIT</code> clause. In 3.1.1, however, more than 3 TB data need be read with over 200k tasks from 9 stages. It's almost a full table scan!</p>
-<p><img src="https://user-images.githubusercontent.com/1191767/158113221-64676211-a869-4949-97ef-498cd34ceb22.png" alt="2.3.1 stages" /></p>
-<p><img src="https://user-images.githubusercontent.com/1191767/158113505-7aae47b0-13d5-42c7-a8bb-55872a15d5e1.png" alt="3.1.1 stages" /></p>
+<p><img src="https://user-images.githubusercontent.com/1191767/158113221-64676211-a869-4949-97ef-498cd34ceb22.png" alt="2.3.1 stages" style="width:100%" /></p>
+<p><img src="https://user-images.githubusercontent.com/1191767/158113505-7aae47b0-13d5-42c7-a8bb-55872a15d5e1.png" alt="3.1.1 stages" style="width:100%" /></p>
 <p>Meanwhile, this driver log in 2.3.1 indicted it's a bucketed scan which I didn't find in 3.1.1.</p>
 <pre><code class="language-text">INFO FileSourceScanExec: Planning with 10000 buckets
 </code></pre>
@@ -29,7 +29,7 @@ LIMIT 10;
 <p>Minimal increase rate in number of partitions between attempts when executing a take on a query. Higher values lead to more partitions read. Lower values might lead to longer execution times as more jobs will be run.</p>
 </blockquote>
 <p>I tried increasing the config to 300k and the performance was a bit better with 239999 tasks immediately being scheduled in the second stage. I suppose it would much better if I could got more resources to run those tasks in parallel.</p>
-<p><img src="https://user-images.githubusercontent.com/1191767/158311306-26e955d5-4eef-45e6-b017-b7dd36c52f18.png" alt="3.1.1 stages with large scaleUpFactor" /></p>
+<p><img src="https://user-images.githubusercontent.com/1191767/158311306-26e955d5-4eef-45e6-b017-b7dd36c52f18.png" alt="3.1.1 stages with large scaleUpFactor" style="width:100%" /></p>
 <h3>Summary</h3>
 <p>These configs are worth checking when taking <code class='language-text'>LIMIT</code> rows with filter from a bucket table.</p>
 <table class="pure-table pure-table-striped">
