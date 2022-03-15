@@ -26,7 +26,7 @@ LIMIT 10;
 <h4>How were the tasks scheduled in 3.1.1?</h4>
 <p>One more puzzle for me is the special incremental way the tasks were scheduled in 3.1.1. Searching for keyword &quot;limit&quot; in configs has led me to <code class='language-text'>spark.sql.limit.scaleUpFactor</code> whose doc says</p>
 <blockquote>
-<p>Minimal increase rate in number of partitions between attempts when executing a take on a query. Higher values lead to more partitions read. Lower values might lead to longer execution times as more jobs will be run.</p>
+<p>Minimal increase rate in number of partitions between attempts when executing a take on a query. Higher values lead to more partitions read. Lower values might lead to longer execution times as more jobs will be run. (Default value is 4)</p>
 </blockquote>
 <p>I tried increasing the config to 300k and the performance was a bit better with 239999 tasks immediately being scheduled in the second stage. I suppose it would much better if I could got more resources to run those tasks in parallel.</p>
 <p><img src="https://user-images.githubusercontent.com/1191767/158311306-26e955d5-4eef-45e6-b017-b7dd36c52f18.png" alt="3.1.1 stages with large scaleUpFactor" style="width:100%" /></p>
